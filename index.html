@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Randy's Analog Design Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="navbar">
+    <div>
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="projects.html">Projects</a>
+      <a class="nav-link" href="tools.html">Tools</a>
+      <a class="nav-link" href="contact.html">Contact</a>
+      <a class="nav-link" href="resume.pdf" target="_blank">Resume</a>
+    </div>
+  </div>
+
+  <div class="project-detail">
+    <h1>Welcome to My Analog Design Portfolio</h1>
+    <p>Hi, I'm Randy. I hold a degree in Computer Engineering from the University of Waterloo with a strong focus on analog circuit design. My primary interests lie in precision analog systems, including operational amplifiers, bandgap voltage references, and circuits for audio and RF applications.
+
+        My work bridges theory and application — from modelling and simulation to layout and prototyping. I strive to design robust, efficient, and scalable analog solutions that stand up to real-world performance requirements.
+        
+        Please explore my portfolio to learn more about the projects I’ve undertaken and the design challenges I’ve addressed.
+        </p>
+  </div>
+
+  <section id="waveform-animation">
+    <canvas id="waveformCanvas" width="800" height="400"></canvas>
+  </section>
+  <div class="modal" id="image-modal">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <img id="modal-img" />
+  </div>
+  <script>
+    const modal = document.getElementById("image-modal");
+    const modalImg = document.getElementById("modal-img");
+  
+    document.querySelectorAll('img').forEach(img => {
+      img.addEventListener('click', () => {
+        modal.style.display = "flex";
+        modalImg.src = img.src;
+      });
+    });
+  
+    function closeModal() {
+      modal.style.display = "none";
+    }
+  
+    window.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+  </script>
+  <footer>
+    <p>&copy; 2025 Randy's Analog Design Portfolio</p>
+  </footer>
+  <!-- Link to the external JavaScript file -->
+<script src="waveform.js"></script>
+</body>
+</html>
