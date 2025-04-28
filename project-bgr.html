@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BGR Project</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal img {
+      max-width: 80%;
+      max-height: 80%;
+    }
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 40px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div>
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="projects.html">Projects</a>
+      <a class="nav-link" href="tools.html">Tools</a>
+      <a class="nav-link" href="contact.html">Contact</a>
+      <a class="nav-link" href="resume.pdf" target="_blank">Resume</a>
+    </div>
+  </div>
+
+  <div class="project-detail">
+    <h1>Bandgap Reference (BGR)</h1>
+    <p class="project-tagline">A temperature-independent voltage reference using two BJTs and three resistors with an op-amp.</p>
+
+    <!-- LTspice Simulation -->
+    <div class="project-section">
+      <h2>LTspice Simulation</h2>
+      <img class="project-image" src="images/bgr-sim.png" alt="BGR LTspice Simulation" />
+    </div>
+
+    <!-- PCB Design -->
+    <div class="project-section">
+      <h2>PCB Design</h2>
+      <img class="project-image" src="images/bgr-pcb.png" alt="BGR PCB" />
+    </div>
+
+    <div class="project-section">
+      <h2>Description</h2>
+      <p>This circuit combines a PTAT and CTAT voltage to create a stable output reference. The op-amp maintains a constant current across the resistors and BJTs, and the result is a ~1.2V reference.</p>
+    </div>
+
+    <div class="project-section">
+      <h2>Key Features</h2>
+      <ul>
+        <li>PTAT and CTAT cancellation</li>
+        <li>Simulation of temperature sweep in LTspice</li>
+        <li>Designed PCB using KiCad</li>
+      </ul>
+    </div>
+
+    <a class="back-link" href="projects.html">← Back to Projects</a>
+  </div>
+
+  <!-- Single Modal Lightbox -->
+  <div class="modal" id="image-modal">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <img id="modal-img" />
+  </div>
+
+  <script>
+    const modal = document.getElementById("image-modal");
+    const modalImg = document.getElementById("modal-img");
+
+    document.querySelectorAll('img').forEach(img => {
+      img.addEventListener('click', () => {
+        modal.style.display = "flex";
+        modalImg.src = img.src;
+      });
+    });
+
+    function closeModal() {
+      modal.style.display = "none";
+    }
+
+    window.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+  </script>
+
+  <footer>
+    <p>&copy; 2025 Randy's Analog Design Portfolio</p>
+  </footer>
+<script src="waveform.js"></script>
+</body>
+</html>
