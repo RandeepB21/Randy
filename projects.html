@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Projects - Randy's Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="navbar">
+    <div>
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="projects.html">Projects</a>
+      <a class="nav-link" href="tools.html">Tools</a>
+      <a class="nav-link" href="contact.html">Contact</a>
+      <a class="nav-link" href="resume.pdf" target="_blank">Resume</a>
+    </div>
+    
+  </div>
+
+  <div class="project-detail">
+    <h1>Projects</h1>
+
+    <!-- Bandgap Reference (BGR) Project -->
+    <div class="project-section">
+      <h2><a href="project-bgr.html">Bandgap Reference (BGR)</a></h2>
+      <p class="project-tagline">A temperature-independent voltage reference using BJTs and resistors.</p>
+    </div>
+
+    <!-- Capstone Project -->
+    <div class="project-section">
+      <h2><a href="project-capstone.html">Capstone: Smart Plant Watering System</a></h2>
+      <p class="project-tagline">IoT and AI-based system that predicts plant watering needs based on sensor data. Built with Arduino, ML, and custom PCB and enclosure design.</p>
+    </div>
+
+    
+  </div>
+  <div class="modal" id="image-modal">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <img id="modal-img" />
+  </div>
+  <script>
+    const modal = document.getElementById("image-modal");
+    const modalImg = document.getElementById("modal-img");
+  
+    document.querySelectorAll('img').forEach(img => {
+      img.addEventListener('click', () => {
+        modal.style.display = "flex";
+        modalImg.src = img.src;
+      });
+    });
+  
+    function closeModal() {
+      modal.style.display = "none";
+    }
+  
+    window.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+  </script>
+  <footer>
+    <p>&copy; 2025 Randy's Analog Design Portfolio</p>
+  </footer>
+
+<script src="waveform.js"></script>
+</body>
+</html>
