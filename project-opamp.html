@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Two-stage op-amp | Randy</title>
+  <meta name="description" content="Two-stage Miller-compensated CMOS op-amp on GF180MCU: 81 dB gain, 29 MHz GBW, 60.6 degree phase margin.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="site-name" href="index.html">Randy <span>Analog IC design</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="projects.html" aria-current="page">Work</a>
+        <a href="tools.html">Tools</a>
+        <a href="contact.html">Contact</a>
+        <a href="resume.pdf" target="_blank" rel="noopener">Résumé</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero project-head">
+      <div class="wrap">
+        <p class="crumb"><a href="projects.html">Work</a></p>
+        <h1>Two-stage Miller-compensated op-amp</h1>
+        <p class="lede">A PMOS-input two-stage OTA, sized for a uniform 0.2 V overdrive and compensated so the right-half-plane zero disappears
+          instead of eating phase margin.</p>
+        <div class="meta"><span><b>Process</b> GF180MCU open PDK</span><span><b>Tools</b> LTspice</span><span><b>Reference</b> Sedra/Smith Ex. 13.1</span></div>
+      </div>
+    </section>
+
+    <section style="padding-top:0">
+      <div class="wrap stack">
+      <figure class="figure bode" data-a0db="81" data-p1="2585" data-p2="44.9e6">
+        <div class="plot"></div>
+        <div class="readout" aria-live="off"></div>
+        <figcaption><b>Two-stage Miller op-amp, open-loop response.</b> Drawn from a two-pole model fitted to the LTspice results
+          (A<sub>0</sub> 81 dB, GBW 29 MHz, PM 60.6&deg;), with the right-half-plane zero cancelled by R<sub>z</sub> = 1/G<sub>m2</sub>. Hover or tap to read off any frequency.</figcaption>
+      </figure>
+
+        <figure class="figure optional">
+          <img src="images/opamp-schematic.png" alt="Schematic of the two-stage op-amp, transistors M1 to M8">
+          <figcaption><b>Schematic.</b> M1/M2 input pair, M3/M4 mirror load, M5 tail, M6/M7 second stage, M8 bias reference.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <table class="spec">
+            <caption>Design point</caption>
+            <thead><tr><th>Parameter</th><th>Condition</th><th>Value</th><th>Unit</th></tr></thead>
+            <tbody>
+              <tr><td>Open-loop DC gain</td><td>Simulated</td><td class="num">81</td><td class="unit">dB</td></tr>
+              <tr><td>Gain-bandwidth product</td><td>Simulated</td><td class="num">29</td><td class="unit">MHz</td></tr>
+              <tr><td>Unity-gain frequency, f<sub>t</sub></td><td>Simulated</td><td class="num">26</td><td class="unit">MHz</td></tr>
+              <tr><td>Phase margin</td><td>Simulated</td><td class="num">60.6</td><td class="unit">&deg;</td></tr>
+              <tr><td>Compensation capacitor, C<sub>c</sub></td><td>Design</td><td class="num">&asymp; 460</td><td class="unit">fF</td></tr>
+              <tr><td>Nulling resistor, R<sub>z</sub></td><td>= 1/G<sub>m2</sub></td><td class="num">&asymp; 2959</td><td class="unit">&Omega;</td></tr>
+              <tr><td>Reference current, I<sub>REF</sub></td><td>Design</td><td class="num">20</td><td class="unit">&micro;A</td></tr>
+              <tr><td>Overdrive voltage, V<sub>OV</sub></td><td>All devices</td><td class="num">0.2</td><td class="unit">V</td></tr>
+              <tr><td>Input common mode, V<sub>ICM</sub></td><td>Design</td><td class="num">1.1</td><td class="unit">V</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="split">
+          <h2>Design notes</h2>
+          <div class="prose">
+            <h3 style="margin-top:0">Sizing</h3>
+            <p>I fixed every device at V<sub>OV</sub> = 0.2 V and set I<sub>REF</sub> = 20 &micro;A, which gives roughly 10 &micro;A per input device and
+              about 41 &micro;A in the second stage. Widths then follow from the square-law relation and the PDK's process parameters, and the
+              LTspice operating point puts every saturated device within about 10 mV of the 0.2 V target.</p>
+            <h3>Compensation</h3>
+            <p>Miller compensation splits the poles but introduces a right-half-plane zero at G<sub>m2</sub>/C<sub>c</sub>, which adds phase lag
+              exactly where it hurts. Placing a nulling resistor R<sub>z</sub> = 1/G<sub>m2</sub> in series with C<sub>c</sub> pushes that zero to infinity.
+              With C<sub>c</sub> &asymp; 460 fF the result is a 60.6&deg; phase margin at a 29 MHz GBW.</p>
+            <h3>Scaling check</h3>
+            <p>Doubling the bias current roughly doubled f<sub>t</sub> and halved the required R<sub>z</sub>, as expected from
+              g<sub>m</sub> &prop; I<sub>D</sub>/V<sub>OV</sub> at a fixed overdrive. Seeing the simulator follow the first-order equations this
+              closely was a useful sanity check on the whole design.</p>
+            <h3>In progress</h3>
+            <p>A full report covering a MOSFET-in-triode alternative to the fixed R<sub>z</sub>, slew-rate limits and why the output stage current
+              has to grow to improve them, and FF, TT, SF, FS and SS corner results.</p>
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table class="spec">
+            <caption>Operating point (LTspice .op)</caption>
+            <thead><tr><th>Device</th><th>Role</th><th>I<sub>D</sub> (&micro;A)</th><th>|V<sub>GS</sub>| (V)</th><th>|V<sub>th</sub>| (V)</th><th>V<sub>dsat</sub> (V)</th><th>g<sub>m</sub> (&micro;S)</th></tr></thead>
+            <tbody>
+              <tr><td>M1, M2</td><td>PMOS input pair</td><td class="num">9.73</td><td class="num">1.17</td><td class="num">0.983</td><td class="num">0.202</td><td class="num">86.5</td></tr>
+              <tr><td>M3, M4</td><td>NMOS mirror load</td><td class="num">9.73</td><td class="num">0.889</td><td class="num">0.699</td><td class="num">0.209</td><td class="num">79.8</td></tr>
+              <tr><td>M5</td><td>PMOS tail source</td><td class="num">19.5</td><td class="num">0.98</td><td class="num">0.79</td><td class="num">0.193</td><td class="num">170</td></tr>
+              <tr><td>M6</td><td>NMOS second stage</td><td class="num">40.9</td><td class="num">0.889</td><td class="num">0.707</td><td class="num">&mdash;</td><td class="num">337</td></tr>
+              <tr><td>M7</td><td>PMOS second-stage load</td><td class="num">40.9</td><td class="num">0.98</td><td class="num">0.79</td><td class="num">0.194</td><td class="num">356</td></tr>
+              <tr><td>M8</td><td>Diode-connected reference</td><td class="num">20.0</td><td class="num">0.98</td><td class="num">0.79</td><td class="num">0.193</td><td class="num">174</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; 2026 Randy</span>
+      <nav aria-label="Elsewhere">
+        <a href="mailto:r4bedi@uwaterloo.ca">Email</a>
+        <a href="https://www.linkedin.com/in/randeep-bedi/" rel="noopener">LinkedIn</a>
+        <a href="http://github.com/randeepb21" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </footer>
+  <script src="site.js"></script>
+</body>
+</html>
