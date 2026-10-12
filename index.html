@@ -1,62 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Randy's Analog Design Portfolio</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Randy | Analog IC design</title>
+  <meta name="description" content="Analog CMOS circuit design portfolio: op-amps, cascode amplifiers and more, simulated on the GF180MCU open PDK.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="navbar">
-    <div>
-      <a class="nav-link" href="index.html">Home</a>
-      <a class="nav-link" href="projects.html">Projects</a>
-      <a class="nav-link" href="tools.html">Tools</a>
-      <a class="nav-link" href="contact.html">Contact</a>
-      <a class="nav-link" href="resume.pdf" target="_blank">Resume</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="site-name" href="index.html">Randy <span>Analog IC design</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="projects.html">Work</a>
+        <a href="tools.html">Tools</a>
+        <a href="contact.html">Contact</a>
+        <a href="resume.pdf" target="_blank" rel="noopener">Résumé</a>
+      </nav>
     </div>
-  </div>
+  </header>
 
-  <div class="project-detail">
-    <h1>Welcome to My Analog Design Portfolio</h1>
-    <p>Hi, I'm Randy. I hold a degree in Computer Engineering from the University of Waterloo with a strong focus on analog circuit design. My primary interests lie in precision analog systems, including operational amplifiers, bandgap voltage references, and circuits for audio and RF applications.
+  <main>
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <h1>I design analog CMOS circuits, starting from the hand calculation.</h1>
+          <p class="lede">Computer Engineering graduate from the University of Waterloo, building a portfolio of amplifiers and references on the
+            GF180MCU open PDK, and applying for an MASc in analog and mixed-signal IC design for Fall 2027.</p>
+          <p class="small muted" style="margin-top:1.2em"><a href="projects.html">See the work</a> or <a href="resume.pdf" target="_blank" rel="noopener">download my résumé</a>.</p>
+        </div>
+      <figure class="figure bode" data-a0db="81" data-p1="2585" data-p2="44.9e6">
+        <div class="plot"></div>
+        <div class="readout" aria-live="off"></div>
+        <figcaption><b>Two-stage Miller op-amp, open-loop response.</b> Drawn from a two-pole model fitted to the LTspice results
+          (A<sub>0</sub> 81 dB, GBW 29 MHz, PM 60.6&deg;), with the right-half-plane zero cancelled by R<sub>z</sub> = 1/G<sub>m2</sub>. Hover or tap to read off any frequency.</figcaption>
+      </figure>
+      </div>
+    </section>
 
-        My work bridges theory and application — from modelling and simulation to layout and prototyping. I strive to design robust, efficient, and scalable analog solutions that stand up to real-world performance requirements.
-        
-        Please explore my portfolio to learn more about the projects I’ve undertaken and the design challenges I’ve addressed.
-        </p>
-  </div>
+    <section>
+      <div class="wrap">
+        <h2>Selected work</h2>
+        <ul class="work">
+          <li><a class="row" href="project-opamp.html">
+            <div>
+              <h3>Two-stage Miller-compensated op-amp</h3>
+              <p>PMOS-input two-stage OTA with nulling-resistor compensation, sized from first principles and verified in DC, AC and transient simulation.</p>
+            </div>
+            <dl class="facts"><dt>Gain</dt><dd>81 dB</dd><dt>GBW</dt><dd>29 MHz</dd><dt>Phase margin</dt><dd>60.6&deg;</dd></dl>
+          </a></li>
+          <li><a class="row" href="project-cascode.html">
+            <div>
+              <h3>Telescopic cascode amplifier</h3>
+              <p>High-gain cascode stage with a source-follower output buffer, plus a gain&ndash;bandwidth study of two load configurations.</p>
+            </div>
+            <dl class="facts"><dt>Gain</dt><dd>~90 dB</dd><dt>Buffer</dt><dd>~38&times; bandwidth at 2 pF</dd></dl>
+          </a></li>
+          <li><a class="row" href="project-capstone.html">
+            <div>
+              <h3>Capstone: smart plant watering system</h3>
+              <p>Custom PCB, enclosure and firmware for a sensor node that predicts when a plant needs water.</p>
+            </div>
+            <dl class="facts"><dt>Board</dt><dd>KiCad, ESP32</dd><dt>Enclosure</dt><dd>Fusion 360</dd></dl>
+          </a></li>
+        </ul>
+        <p class="small" style="margin-top:18px"><a href="projects.html">All projects</a></p>
+      </div>
+    </section>
 
-  <section id="waveform-animation">
-    <canvas id="waveformCanvas" width="800" height="400"></canvas>
-  </section>
-  <div class="modal" id="image-modal">
-    <span class="modal-close" onclick="closeModal()">&times;</span>
-    <img id="modal-img" />
-  </div>
-  <script>
-    const modal = document.getElementById("image-modal");
-    const modalImg = document.getElementById("modal-img");
-  
-    document.querySelectorAll('img').forEach(img => {
-      img.addEventListener('click', () => {
-        modal.style.display = "flex";
-        modalImg.src = img.src;
-      });
-    });
-  
-    function closeModal() {
-      modal.style.display = "none";
-    }
-  
-    window.addEventListener("click", (e) => {
-      if (e.target === modal) closeModal();
-    });
-  </script>
-  <footer>
-    <p>&copy; 2025 Randy's Analog Design Portfolio</p>
+    <section>
+      <div class="wrap split">
+        <h2>How I work</h2>
+        <div class="prose">
+          <p>Every design starts on paper: bias currents, overdrive voltages and pole locations from Sedra/Smith and Razavi. Only then does it go into
+            LTspice, in a fixed order: DC operating point, AC response, transient, then a comparison against the hand numbers. When they disagree,
+            that gap is usually the most interesting part of the write-up.</p>
+          <p>Analog coursework at Waterloo covered ECE 240, 340, 380 and 444, and in ECE 432 I worked in Cadence Virtuoso and Spectre on a 22&nbsp;nm PDK.
+            Alongside the analog work I'm building RTL and SystemVerilog verification skills in a separate track.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap split">
+        <h2>On the bench next</h2>
+        <ol class="roadmap">
+          <li><div>Sample-and-hold amplifier<span>Switch and capacitor sampling: charge injection, clock timing, settling.</span></div></li>
+          <li><div>Correlated double sampling<span>Two-phase offset and noise cancellation for sensor readout, reusing the S/H mechanics.</span></div></li>
+          <li><div>Rail-to-rail op-amp<span>Complementary input pair and class-AB output, building on the two-stage design.</span></div></li>
+        </ol>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; 2026 Randy</span>
+      <nav aria-label="Elsewhere">
+        <a href="mailto:r4bedi@uwaterloo.ca">Email</a>
+        <a href="https://www.linkedin.com/in/randeep-bedi/" rel="noopener">LinkedIn</a>
+        <a href="http://github.com/randeepb21" rel="noopener">GitHub</a>
+      </nav>
+    </div>
   </footer>
-  <!-- Link to the external JavaScript file -->
-<script src="waveform.js"></script>
+  <script src="site.js"></script>
 </body>
 </html>
