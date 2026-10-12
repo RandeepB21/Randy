@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Telescopic cascode amplifier | Randy</title>
+  <meta name="description" content="Telescopic cascode amplifier with source-follower buffer on GF180MCU: about 90 dB gain.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="site-name" href="index.html">Randy <span>Analog IC design</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="projects.html" aria-current="page">Work</a>
+        <a href="tools.html">Tools</a>
+        <a href="contact.html">Contact</a>
+        <a href="resume.pdf" target="_blank" rel="noopener">Résumé</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero project-head">
+      <div class="wrap">
+        <p class="crumb"><a href="projects.html">Work</a></p>
+        <h1>Telescopic cascode amplifier</h1>
+        <p class="lede">A cascode gain stage pushed to about 90 dB, then buffered so it can actually drive a load without giving all that bandwidth away.</p>
+        <div class="meta"><span><b>Process</b> GF180MCU open PDK</span><span><b>Tools</b> LTspice</span><span><b>Reference</b> Sedra/Smith ch. 8</span></div>
+      </div>
+    </section>
+
+    <section style="padding-top:0">
+      <div class="wrap stack">
+        <figure class="figure optional">
+          <img src="images/cascode-schematic.png" alt="Schematic of the telescopic cascode amplifier with source-follower buffer">
+          <figcaption><b>Schematic.</b> Telescopic cascode stage followed by a source-follower buffer.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <table class="spec">
+            <caption>Results</caption>
+            <thead><tr><th>Parameter</th><th>Condition</th><th>Value</th></tr></thead>
+            <tbody>
+              <tr><td>AC gain</td><td>Full cascode load</td><td class="num">~90 dB</td></tr>
+              <tr><td>Bandwidth improvement from buffer</td><td>2 pF load</td><td class="num">~38&times;</td></tr>
+              <tr><td>Transient response</td><td>Small-signal step</td><td class="num">Verified</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="split">
+          <h2>Design notes</h2>
+          <div class="prose">
+            <h3 style="margin-top:0">Biasing</h3>
+            <p>Stacking four devices leaves little headroom, so the bias points were worked out by hand first and then tuned against the
+              LTspice operating point until every transistor sat in saturation with margin.</p>
+            <h3>Driving a load</h3>
+            <p>The cascode's high output resistance is what produces the gain, but it also forms a very low-frequency pole with any real
+              load. Adding a source-follower buffer separates the high-impedance node from the 2 pF load and extended the bandwidth by about 38&times;.</p>
+            <h3>Gain versus bandwidth</h3>
+            <p>I compared the full cascode load with a simplified PMOS load. The simpler load gives up gain in exchange for a lower output resistance
+              and a higher dominant pole, which makes the gain&ndash;bandwidth trade-off visible in the same testbench.</p>
+          </div>
+        </div>
+
+        <figure class="figure optional">
+          <img src="images/cascode-ac.png" alt="AC response comparing full cascode load and simplified PMOS load">
+          <figcaption><b>AC response.</b> Full cascode load against simplified PMOS load.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; 2026 Randy</span>
+      <nav aria-label="Elsewhere">
+        <a href="mailto:r4bedi@uwaterloo.ca">Email</a>
+        <a href="https://www.linkedin.com/in/randeep-bedi/" rel="noopener">LinkedIn</a>
+        <a href="http://github.com/randeepb21" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </footer>
+  <script src="site.js"></script>
+</body>
+</html>
