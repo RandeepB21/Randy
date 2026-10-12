@@ -1,5 +1,5 @@
 /* Shared behaviour for every page:
-   1. Bode plot (two-pole + optional zero model) with hover/touch readout
+   1. Bode plot (measured data, or a pole/zero model) with hover/touch readout
    2. Accessible image lightbox for .gallery groups
    3. Optional figures that hide themselves if the image is missing */
 
@@ -24,17 +24,39 @@
     const A0 = Math.pow(10, parseFloat(el.dataset.a0db) / 20);
     const p1 = parseFloat(el.dataset.p1);
     const p2 = parseFloat(el.dataset.p2);
+    const p3 = el.dataset.p3 ? parseFloat(el.dataset.p3) : Infinity; // optional third pole
     const z = el.dataset.z ? parseFloat(el.dataset.z) : Infinity; // RHP zero; Infinity = cancelled
 
-    const H = (f) => {
-      const w1 = f / p1, w2 = f / p2, wz = f / z;
-      const mag = A0 * Math.sqrt(1 + wz * wz) / (Math.sqrt(1 + w1 * w1) * Math.sqrt(1 + w2 * w2));
-      const ph = -Math.atan(wz) - Math.atan(w1) - Math.atan(w2); // RHP zero adds lag
-      return { db: 20 * Math.log10(mag), deg: ph * 180 / Math.PI };
-    };
+    // Either measured data (a <script class="bode-data"> holding [[f, dB, deg], ...])
+    // or the pole/zero model above.
+    const dataEl = el.querySelector("script.bode-data");
+    let H;
+    if (dataEl) {
+      const pts = JSON.parse(dataEl.textContent);
+      const lf = pts.map((r) => Math.log10(r[0]));
+      H = (f) => {
+        const x = Math.log10(f);
+        if (x <= lf[0]) return { db: pts[0][1], deg: pts[0][2] };
+        if (x >= lf[lf.length - 1]) { const r = pts[pts.length - 1]; return { db: r[1], deg: r[2] }; }
+        let i = 1;
+        while (lf[i] < x) i++;
+        const t = (x - lf[i - 1]) / (lf[i] - lf[i - 1]);
+        return { db: pts[i - 1][1] + t * (pts[i][1] - pts[i - 1][1]),
+                 deg: pts[i - 1][2] + t * (pts[i][2] - pts[i - 1][2]) };
+      };
+    } else {
+      H = (f) => {
+        const w1 = f / p1, w2 = f / p2, w3 = f / p3, wz = f / z;
+        const mag = A0 * Math.sqrt(1 + wz * wz) /
+          (Math.sqrt(1 + w1 * w1) * Math.sqrt(1 + w2 * w2) * Math.sqrt(1 + w3 * w3));
+        const ph = -Math.atan(wz) - Math.atan(w1) - Math.atan(w2) - Math.atan(w3); // RHP zero adds lag
+        return { db: 20 * Math.log10(mag), deg: ph * 180 / Math.PI };
+      };
+    }
 
     // unity-gain frequency by bisection in log space
-    let lo = 1, hi = 1e10;
+    const fmin = parseFloat(el.dataset.fmin || 10), fmax = 1e9;
+    let lo = fmin, hi = fmax;
     for (let i = 0; i < 80; i++) {
       const mid = Math.sqrt(lo * hi);
       if (H(mid).db > 0) lo = mid; else hi = mid;
@@ -45,8 +67,7 @@
     // geometry
     const W = el.clientWidth && el.clientWidth < 560 ? 480 : 760, L = 54, R = 16;
     const mag = { top: 14, bot: 214, min: -60, max: 100, step: 20 };
-    const ph = { top: 252, bot: 412, min: -180, max: 0, step: 45 };
-    const fmin = 10, fmax = 1e9;
+    const ph = { top: 252, bot: 412, min: parseFloat(el.dataset.phmin || -180), max: 0, step: 45 };
     const X = (f) => L + (Math.log10(f) - Math.log10(fmin)) / (Math.log10(fmax) - Math.log10(fmin)) * (W - L - R);
     const Finv = (x) => Math.pow(10, Math.log10(fmin) + (x - L) / (W - L - R) * (Math.log10(fmax) - Math.log10(fmin)));
     const Y = (p, v) => p.bot - (v - p.min) / (p.max - p.min) * (p.bot - p.top);
@@ -70,7 +91,7 @@
     };
 
     // grids
-    for (let d = 1; d <= 9; d++) {
+    for (let d = Math.round(Math.log10(fmin)); d <= 9; d++) {
       const f = Math.pow(10, d);
       const x = X(f);
       for (const p of [mag, ph]) add("line", { x1: x, x2: x, y1: p.top, y2: p.bot, class: "gridline" });
