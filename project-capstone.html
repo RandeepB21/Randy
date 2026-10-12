@@ -1,200 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Capstone Project</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    .lightbox {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .lightbox img {
-      max-width: 80%;
-      max-height: 80%;
-    }
-    .lightbox .close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 30px;
-      color: white;
-      cursor: pointer;
-    }
-
-    .project-image {
-      width: 250px;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 8px;
-      display: block;
-      margin-bottom: 15px;
-      transition: transform 0.2s ease;
-    }
-
-    .project-image:hover {
-      transform: scale(1.02);
-    }
-
-    .image-gallery {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .image-gallery a {
-      display: block;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Capstone: smart plant watering | Randy</title>
+  <meta name="description" content="Capstone project: a smart plant watering system with a custom KiCad PCB, Fusion 360 enclosure and AI watering predictions.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="navbar">
-    <div>
-      <a class="nav-link" href="index.html">Home</a>
-      <a class="nav-link" href="projects.html">Projects</a>
-      <a class="nav-link" href="tools.html">Tools</a>
-      <a class="nav-link" href="contact.html">Contact</a>
-      <a class="nav-link" href="resume.pdf" target="_blank">Resume</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="site-name" href="index.html">Randy <span>Analog IC design</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="projects.html" aria-current="page">Work</a>
+        <a href="tools.html">Tools</a>
+        <a href="contact.html">Contact</a>
+        <a href="resume.pdf" target="_blank" rel="noopener">Résumé</a>
+      </nav>
     </div>
-  </div>
+  </header>
 
-  <div class="project-detail">
-    <h1>Capstone Project: Smart Plant Watering System</h1>
-    <p class="project-tagline">A smart watering system that uses AI to optimize irrigation based on soil moisture and environmental conditions.</p>
+  <main>
+    <section class="hero project-head">
+      <div class="wrap">
+        <p class="crumb"><a href="projects.html">Work</a></p>
+        <h1>Capstone: smart plant watering system</h1>
+        <p class="lede">A sensor node that waters a plant on its own, deciding when based on soil moisture, the environment and a prediction model in a companion app.</p>
+        <div class="meta"><span><b>My role</b> PCB, enclosure, watering detection</span><span><b>Tools</b> KiCad, Fusion 360</span><span><b>Year</b> 2025</span></div>
+      </div>
+    </section>
 
-    <div class="project-section">
-        <h2>Enclosure Design</h2>
-        <div class="image-gallery">
-          <a class="lightbox-trigger"><img class="project-image" src="images/capstone-enclosure.png" alt="Enclosure 1"></a>
-          <a class="lightbox-trigger"><img class="project-image" src="images/capstone-enclosure2.png" alt="Enclosure 2"></a>
-          <a class="lightbox-trigger"><img class="project-image" src="images/capstone-enclosure3.png" alt="Enclosure 3"></a>
+    <section style="padding-top:0">
+      <div class="wrap stack">
+        <div class="split">
+          <h2>Overview</h2>
+          <div class="prose">
+            <p>The node collects sensor data and talks to a mobile app over Bluetooth and Wi-Fi. In the app, a decision model works out the
+              best time to water and sends the command back to the device.</p>
+            <h3>What I built</h3>
+            <ul>
+              <li>The custom sensor and controller PCB in KiCad, from schematic through layout.</li>
+              <li>The enclosure in Fusion 360, housing the board and routing the wiring.</li>
+              <li>A detection algorithm that recognises and logs each time the plant is watered.</li>
+            </ul>
+          </div>
         </div>
-    </div>
 
-    <div class="project-section">
-      <h2>Schematic</h2>
-      <a class="lightbox-trigger"><img class="project-image" src="images/capstone-schematic.png" alt="Schematic"></a>
-    </div>
-
-    <div class="project-section">
-      <h2>PCB Renders</h2>
-      <div class="image-gallery">
-        <a class="lightbox-trigger"><img class="project-image" src="images/capstone-pcb_render1.png" alt="PCB 1"></a>
-        <a class="lightbox-trigger"><img class="project-image" src="images/capstone-pcb_render2.png" alt="PCB 2"></a>
-        <a class="lightbox-trigger"><img class="project-image" src="images/capstone-pcb_render3.png" alt="PCB 3"></a>
+        <div class="gallery-group">
+          <h3>Finished device</h3>
+          <div class="gallery">
+            <button type="button"><img src="images/capstone-finished_design1.png" alt="Finished device, view 1" loading="lazy"></button>
+            <button type="button"><img src="images/capstone-finished_design2.png" alt="Finished device, view 2" loading="lazy"></button>
+            <button type="button"><img src="images/capstone-finished_design3.png" alt="Finished device, view 3" loading="lazy"></button>
+          </div>
+        </div>
+        <div class="gallery-group">
+          <h3>Schematic</h3>
+          <div class="gallery">
+            <button type="button"><img src="images/capstone-schematic.png" alt="Sensor and controller schematic" loading="lazy"></button>
+          </div>
+        </div>
+        <div class="gallery-group">
+          <h3>PCB</h3>
+          <div class="gallery">
+            <button type="button"><img src="images/capstone-pcb_render1.png" alt="PCB render, view 1" loading="lazy"></button>
+            <button type="button"><img src="images/capstone-pcb_render2.png" alt="PCB render, view 2" loading="lazy"></button>
+            <button type="button"><img src="images/capstone-pcb_render3.png" alt="PCB render, view 3" loading="lazy"></button>
+          </div>
+        </div>
+        <div class="gallery-group">
+          <h3>Enclosure</h3>
+          <div class="gallery">
+            <button type="button"><img src="images/capstone-enclosure.png" alt="Enclosure design, view 1" loading="lazy"></button>
+            <button type="button"><img src="images/capstone-enclosure2.png" alt="Enclosure design, view 2" loading="lazy"></button>
+            <button type="button"><img src="images/capstone-enclosure3.png" alt="Enclosure design, view 3" loading="lazy"></button>
+          </div>
+        </div>
       </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; 2026 Randy</span>
+      <nav aria-label="Elsewhere">
+        <a href="mailto:r4bedi@uwaterloo.ca">Email</a>
+        <a href="https://www.linkedin.com/in/randeep-bedi/" rel="noopener">LinkedIn</a>
+        <a href="http://github.com/randeepb21" rel="noopener">GitHub</a>
+      </nav>
     </div>
-
-    <div class="project-section">
-      <h2>Finished Design</h2>
-      <div class="image-gallery">
-        <a class="lightbox-trigger"><img class="project-image" src="images/capstone-finished_design1.png" alt="Finished Design 1"></a>
-        <a class="lightbox-trigger"><img class="project-image" src="images/capstone-finished_design2.png" alt="Finished Design 2"></a>
-        <a class="lightbox-trigger"><img class="project-image" src="images/capstone-finished_design3.png" alt="Finished Design 3"></a>
-      </div>
-    </div>
-
-    <div class="project-section">
-      <h2>Description</h2>
-      <p>The system autonomously waters plants based on AI and sensor data. It uses a Bluetooth and Wi-Fi connection to communicate with a mobile app, where a decision model is used to calculate optimal watering time.</p>
-    </div>
-
-    <div class="project-section">
-      <h2>My Role</h2>
-      <p>I designed a custom PCB with KiCad and created an enclosure for circuitry and wiring using Fusion 360. I also developed a smart watering detection algorithm to track and record when the plant is watered.</p>
-    </div>
-
-    <div class="project-section">
-      <h2>Key Features</h2>
-      <ul>
-        <li>Arduino-based sensor data collection</li>
-        <li>Bluetooth and Wi-Fi communication for remote control</li>
-        <li>AI model for decision-making on watering schedules</li>
-        <li>PCB designed using KiCad for the sensor and controller unit</li>
-      </ul>
-    </div>
-
-    <a class="back-link" href="projects.html">← Back to Projects</a>
-  </div>
-
-  <!-- Lightbox -->
-  <div class="lightbox" id="lightbox">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <img id="lightbox-img" />
-  </div>
-
-  <script>
-    const modal = document.getElementById("lightbox");
-    const modalImg = document.getElementById("lightbox-img");
-    const triggers = Array.from(document.querySelectorAll(".lightbox-trigger img"));
-    let currentIndex = 0;
-
-    // Open modal
-    triggers.forEach((img, index) => {
-      img.addEventListener("click", () => {
-        modal.style.display = "flex";
-        modalImg.src = img.src;
-        currentIndex = index;
-      });
-    });
-
-    // Close modal
-    function closeModal() {
-      modal.style.display = "none";
-    }
-
-    window.addEventListener("click", (e) => {
-      if (e.target === modal) closeModal();
-    });
-
-    // Keyboard navigation
-    window.addEventListener("keydown", (e) => {
-      if (modal.style.display === "flex") {
-        if (e.key === "ArrowRight") {
-          currentIndex = (currentIndex + 1) % triggers.length;
-          modalImg.src = triggers[currentIndex].src;
-        } else if (e.key === "ArrowLeft") {
-          currentIndex = (currentIndex - 1 + triggers.length) % triggers.length;
-          modalImg.src = triggers[currentIndex].src;
-        } else if (e.key === "Escape") {
-          closeModal();
-        }
-      }
-    });
-
-    // Swipe for mobile
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    modal.addEventListener("touchstart", (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-    });
-
-    modal.addEventListener("touchend", (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      const swipeThreshold = 50;
-      if (touchEndX < touchStartX - swipeThreshold) {
-        currentIndex = (currentIndex + 1) % triggers.length;
-        modalImg.src = triggers[currentIndex].src;
-      } else if (touchEndX > touchStartX + swipeThreshold) {
-        currentIndex = (currentIndex - 1 + triggers.length) % triggers.length;
-        modalImg.src = triggers[currentIndex].src;
-      }
-    });
-  </script>
-
-  <footer>
-    <p>&copy; 2025 Randy's Analog Design Portfolio</p>
   </footer>
-<script src="waveform.js"></script>
+  <script src="site.js"></script>
 </body>
 </html>
