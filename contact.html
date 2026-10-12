@@ -1,43 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Contact | Randy's Analog Design Portfolio</title>
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact | Randy</title>
+  <meta name="description" content="How to reach Randy.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="navbar">
-    <div>
-      <a class="nav-link" href="index.html">Home</a>
-      <a class="nav-link" href="projects.html">Projects</a>
-      <a class="nav-link" href="tools.html">Tools</a>
-      <a class="nav-link" href="contact.html">Contact</a>
-      <a class="nav-link" href="resume.pdf" target="_blank">Resume</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="site-name" href="index.html">Randy <span>Analog IC design</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="projects.html">Work</a>
+        <a href="tools.html">Tools</a>
+        <a href="contact.html" aria-current="page">Contact</a>
+        <a href="resume.pdf" target="_blank" rel="noopener">Résumé</a>
+      </nav>
     </div>
-  </div>
+  </header>
 
-  <div class="contact-container">
-    <h1>Contact Me</h1>
-    <div class="contact-info">
-      <p>If you'd like to get in touch, feel free to use one of the methods below:</p>
-      <div class="contact-methods">
-        <a class="contact-link" href="mailto:r4bedi@uwaterloo.ca">
-          <i class="fas fa-envelope"></i>Email
-        </a>
-        <a class="contact-link" href="https://www.linkedin.com/in/randeep-bedi/" target="_blank">
-          <i class="fab fa-linkedin"></i>LinkedIn
-        </a>
-        <a class="contact-link" href="http://github.com/randeepb21" target="_blank">
-          <i class="fab fa-github"></i>GitHub
-        </a>
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <h1>Contact</h1>
+        <p class="lede">I'm happy to talk about analog design, graduate research or open roles. Email is the quickest way to reach me.</p>
       </div>
+    </section>
+
+    <section style="padding-top:0">
+      <div class="wrap">
+        <ul class="contact-list">
+          <li><span>Email</span><a href="mailto:r4bedi@uwaterloo.ca">you@example.com</a></li>
+          <li><span>LinkedIn</span><a href="https://www.linkedin.com/in/randeep-bedi/" rel="noopener">linkedin.com/in/your-handle</a></li>
+          <li><span>GitHub</span><a href="http://github.com/randeepb21" rel="noopener">github.com/your-handle</a></li>
+          <li><span>Résumé</span><a href="resume.pdf" target="_blank" rel="noopener">resume.pdf</a></li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; 2026 Randy</span>
+      <nav aria-label="Elsewhere">
+        <a href="mailto:r4bedi@uwaterloo.ca">Email</a>
+        <a href="https://www.linkedin.com/in/randeep-bedi/" rel="noopener">LinkedIn</a>
+        <a href="http://github.com/randeepb21" rel="noopener">GitHub</a>
+      </nav>
     </div>
-  </div>
-  <footer>
-    <p>&copy; 2025 Randy's Analog Design Portfolio</p>
   </footer>
-<script src="waveform.js"></script>
+  <script src="site.js"></script>
 </body>
 </html>
