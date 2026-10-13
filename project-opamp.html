@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Two-stage op-amp | Randy</title>
-  <meta name="description" content="Two-stage Miller-compensated CMOS op-amp on GF180MCU: 81 dB gain, 29 MHz GBW, 60.6 degree phase margin.">
+  <meta name="description" content="Two-stage Miller-compensated CMOS op-amp on GF180MCU: 81.8 dB gain, 35 MHz unity-gain frequency, 65 degree phase margin, triode-transistor compensation verified across PVT corners.">
   <meta name="color-scheme" content="light dark">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
   <header class="site-header">
@@ -29,40 +29,43 @@
       <div class="wrap">
         <p class="crumb"><a href="projects.html">Work</a></p>
         <h1>Two-stage Miller-compensated op-amp</h1>
-        <p class="lede">A PMOS-input two-stage OTA, sized for a uniform 0.2 V overdrive and compensated so the right-half-plane zero disappears
-          instead of eating phase margin.</p>
-        <div class="meta"><span><b>Process</b> GF180MCU open PDK</span><span><b>Tools</b> LTspice</span><span><b>Reference</b> Sedra/Smith Ex. 13.1</span></div>
+        <p class="lede">A PMOS-input two-stage op-amp, compensated twice over: once for small-signal stability, then again when a large step
+          showed the second stage cutting off. The nulling resistor is built two ways, as an ideal resistor and as a transistor in triode,
+          and the transistor version holds its phase margin far better across process and temperature.</p>
+        <div class="meta"><span><b>Process</b> GF180MCU open PDK, 3.3 V</span><span><b>Tools</b> LTspice</span><span><b>Load</b> 1 pF</span><span><b>Reference</b> Sedra/Smith, Razavi</span></div>
       </div>
     </section>
 
     <section style="padding-top:0">
       <div class="wrap stack">
-      <figure class="figure bode" data-a0db="81" data-p1="2585" data-p2="44.9e6">
+      <figure class="figure bode" data-a0db="81.8" data-p1="3100" data-p2="80e6" data-p3="1.825e9" data-phmin="-225">
         <div class="plot"></div>
         <div class="readout" aria-live="off"></div>
-        <figcaption><b>Two-stage Miller op-amp, open-loop response.</b> Drawn from a two-pole model fitted to the LTspice results
-          (A<sub>0</sub> 81 dB, GBW 29 MHz, PM 60.6&deg;), with the right-half-plane zero cancelled by R<sub>z</sub> = 1/G<sub>m2</sub>. Hover or tap to read off any frequency.</figcaption>
+        <figcaption><b>Two-stage Miller op-amp, open-loop response.</b> Final design with the triode-transistor nulling resistor and
+          C<sub>C</sub> = 350 fF. Drawn from a three-pole model fitted to the LTspice results (81.8 dB, 3.12 kHz, f<sub>t</sub> 35.0 MHz,
+          PM 65.3&deg;). Hover or tap to read off any frequency.</figcaption>
       </figure>
 
         <figure class="figure optional">
-          <img src="images/opamp-schematic.png" alt="Schematic of the two-stage op-amp, transistors M1 to M8">
-          <figcaption><b>Schematic.</b> M1/M2 input pair, M3/M4 mirror load, M5 tail, M6/M7 second stage, M8 bias reference.</figcaption>
+          <img src="images/opamp-schematic.png" alt="Schematic of the two-stage op-amp with compensation capacitor and triode-transistor nulling resistor">
+          <figcaption><b>Schematic.</b> M1/M2 input pair, M3/M4 mirror load, M5 tail, M6/M7 second stage, M8 bias reference, with
+            C<sub>C</sub> and the triode transistor M<sub>Z</sub> and its bias network M<sub>P</sub>, M<sub>A</sub>, M<sub>B</sub>.</figcaption>
         </figure>
 
         <div class="table-scroll">
           <table class="spec">
-            <caption>Design point</caption>
-            <thead><tr><th>Parameter</th><th>Condition</th><th>Value</th><th>Unit</th></tr></thead>
+            <caption>Final design (TT, 27&nbsp;&deg;C, C<sub>C</sub> = 350 fF, C<sub>L</sub> = 1 pF)</caption>
+            <thead><tr><th>Parameter</th><th>Ideal resistor (R = 1/g<sub>m6</sub>)</th><th>Triode transistor M<sub>Z</sub></th></tr></thead>
             <tbody>
-              <tr><td>Open-loop DC gain</td><td>Simulated</td><td class="num">81</td><td class="unit">dB</td></tr>
-              <tr><td>Gain-bandwidth product</td><td>Simulated</td><td class="num">29</td><td class="unit">MHz</td></tr>
-              <tr><td>Unity-gain frequency, f<sub>t</sub></td><td>Simulated</td><td class="num">26</td><td class="unit">MHz</td></tr>
-              <tr><td>Phase margin</td><td>Simulated</td><td class="num">60.6</td><td class="unit">&deg;</td></tr>
-              <tr><td>Compensation capacitor, C<sub>c</sub></td><td>Design</td><td class="num">&asymp; 460</td><td class="unit">fF</td></tr>
-              <tr><td>Nulling resistor, R<sub>z</sub></td><td>= 1/G<sub>m2</sub></td><td class="num">&asymp; 2959</td><td class="unit">&Omega;</td></tr>
-              <tr><td>Reference current, I<sub>REF</sub></td><td>Design</td><td class="num">20</td><td class="unit">&micro;A</td></tr>
-              <tr><td>Overdrive voltage, V<sub>OV</sub></td><td>All devices</td><td class="num">0.2</td><td class="unit">V</td></tr>
-              <tr><td>Input common mode, V<sub>ICM</sub></td><td>Design</td><td class="num">1.1</td><td class="unit">V</td></tr>
+              <tr><td>Open-loop DC gain (hand: 81.8 dB)</td><td class="num">81.8 dB</td><td class="num">81.8 dB</td></tr>
+              <tr><td>&minus;3 dB bandwidth</td><td class="num">3.12 kHz</td><td class="num">3.12 kHz</td></tr>
+              <tr><td>Unity-gain frequency, f<sub>t</sub></td><td class="num">35.7 MHz</td><td class="num">35.0 MHz</td></tr>
+              <tr><td>Phase margin</td><td class="num">66.2&deg;</td><td class="num">65.3&deg;</td></tr>
+              <tr><td>Gain margin</td><td class="num">26.8 dB</td><td class="num">32.9 dB</td></tr>
+              <tr><td>Slew rate (rise / fall)</td><td class="num">47.5 / 54.8 V/&micro;s</td><td class="num">46.5 / 54.4 V/&micro;s</td></tr>
+              <tr><td>Large-step overshoot</td><td class="num">3.44%</td><td class="num">5.05%</td></tr>
+              <tr><td>Rise / fall time, 10&ndash;90%</td><td class="num">16.8 / 14.6 ns</td><td class="num">17.2 / 14.7 ns</td></tr>
+              <tr><td>Power</td><td class="num">0.400 mW</td><td class="num">0.427 mW</td></tr>
             </tbody>
           </table>
         </div>
@@ -71,37 +74,71 @@
           <h2>Design notes</h2>
           <div class="prose">
             <h3 style="margin-top:0">Sizing</h3>
-            <p>I fixed every device at V<sub>OV</sub> = 0.2 V and set I<sub>REF</sub> = 20 &micro;A, which gives roughly 10 &micro;A per input device and
-              about 41 &micro;A in the second stage. Widths then follow from the square-law relation and the PDK's process parameters, and the
-              LTspice operating point puts every saturated device within about 10 mV of the 0.2 V target.</p>
-            <h3>Compensation</h3>
-            <p>Miller compensation splits the poles but introduces a right-half-plane zero at G<sub>m2</sub>/C<sub>c</sub>, which adds phase lag
-              exactly where it hurts. Placing a nulling resistor R<sub>z</sub> = 1/G<sub>m2</sub> in series with C<sub>c</sub> pushes that zero to infinity.
-              With C<sub>c</sub> &asymp; 460 fF the result is a 60.6&deg; phase margin at a 29 MHz GBW.</p>
-            <h3>Scaling check</h3>
-            <p>Doubling the bias current roughly doubled f<sub>t</sub> and halved the required R<sub>z</sub>, as expected from
-              g<sub>m</sub> &prop; I<sub>D</sub>/V<sub>OV</sub> at a fixed overdrive. Seeing the simulator follow the first-order equations this
-              closely was a useful sanity check on the whole design.</p>
-            <h3>In progress</h3>
-            <p>A full report covering a MOSFET-in-triode alternative to the fixed R<sub>z</sub>, slew-rate limits and why the output stage current
-              has to grow to improve them, and FF, TT, SF, FS and SS corner results.</p>
+            <p>Every device runs at V<sub>OV</sub> = 0.2 V with L = 0.56 &micro;m. I measured I<sub>D</sub>/W for each device type at that
+              overdrive in LTspice, then set widths from branch currents: 10 &micro;A per input device and 82 &micro;A in the second stage.
+              M6 is sized from the systematic-offset condition (W/L)<sub>6</sub>/(W/L)<sub>4</sub> = 2(W/L)<sub>7</sub>/(W/L)<sub>5</sub>.
+              By hand, each stage gives about 102 and 120 V/V, for 81.8 dB overall, which matches simulation.</p>
+            <h3>Why it needs compensation</h3>
+            <p>Without compensation both poles sit below the 201 MHz unity-gain frequency, each contributing nearly 90&deg;, and the
+              phase margin is &minus;7.8&deg;: unstable as a unity-gain buffer. Miller capacitance C<sub>C</sub> splits the poles, but adds a
+              right-half-plane zero at g<sub>m6</sub>/C<sub>C</sub>. A resistor of 1/g<sub>m6</sub> = 1479 &Omega; in series with C<sub>C</sub>
+              pushes that zero to infinity, leaving PM = 90&deg; &minus; tan<sup>&minus;1</sup>(f<sub>t</sub>/f<sub>p2</sub>). Targeting 60&deg; gives
+              C<sub>C</sub> = 233.8 fF, and simulation returns 57.2&deg;.</p>
+            <h3>The large step that changed C<sub>C</sub></h3>
+            <p>That design overshot a large step by 15.8%. During slewing, the first stage pulled M6's gate below threshold and switched
+              it off. The output stage can only keep up if I<sub>7</sub> &ge; I(1 + C<sub>2</sub>/C<sub>C</sub>). With I<sub>7</sub> fixed at
+              81.9 &micro;A, that means C<sub>C</sub> &ge; 330 fF, which is the same as asking for a phase margin of at least 67.7&deg;. I raised
+              C<sub>C</sub> to 350 fF. Overshoot fell to 3.4% and M6's gate stayed above 0.715 V, at the cost of f<sub>t</sub> dropping from
+              49.7 to 35.7 MHz.</p>
+            <h3>A resistor that tracks g<sub>m6</sub></h3>
+            <p>A fixed resistor only cancels the zero at one value of g<sub>m6</sub>, and g<sub>m6</sub> drifts with process and temperature.
+              Instead I biased an NMOS M<sub>Z</sub> in triode at the same overdrive as M6, so R<sub>Z</sub>g<sub>m6</sub> depends only on the
+              width ratio. A diode stack at M6's current density sets M<sub>Z</sub>'s gate, so V<sub>OV,Z</sub> follows V<sub>OV6</sub>. I sized
+              for R<sub>Z</sub>g<sub>m6</sub> = 1.2, a little above 1, which moves the zero into the left half-plane to add phase. The first
+              sizing gave 1.144, and resizing W<sub>Z</sub> from 11.2 to 10.7 &micro;m landed exactly on 1.20.</p>
+          </div>
+        </div>
+
+        <div class="split">
+          <h2>Across process and temperature</h2>
+          <div class="prose">
+            <p>I swept TT, SS, FF, SF and FS at &minus;40, 27, 85 and 125&nbsp;&deg;C, plus &plusmn;20% on the fixed resistor. The triode
+              transistor keeps the phase margin within 0.7&deg; at any one corner against up to 6.9&deg; for the resistor, and its worst case
+              is 63.4&deg; against 60.8&deg;. The skewed corners cause most of what variation remains, because the PMOS input pair and the NMOS
+              output device move in opposite directions.</p>
           </div>
         </div>
 
         <div class="table-scroll">
           <table class="spec">
-            <caption>Operating point (LTspice .op)</caption>
-            <thead><tr><th>Device</th><th>Role</th><th>I<sub>D</sub> (&micro;A)</th><th>|V<sub>GS</sub>| (V)</th><th>|V<sub>th</sub>| (V)</th><th>V<sub>dsat</sub> (V)</th><th>g<sub>m</sub> (&micro;S)</th></tr></thead>
+            <caption>Corner summary (5 corners, &minus;40 to 125&nbsp;&deg;C)</caption>
+            <thead><tr><th>Measurement</th><th>Resistor, &plusmn;20%</th><th>Triode transistor M<sub>Z</sub></th></tr></thead>
             <tbody>
-              <tr><td>M1, M2</td><td>PMOS input pair</td><td class="num">9.73</td><td class="num">1.17</td><td class="num">0.983</td><td class="num">0.202</td><td class="num">86.5</td></tr>
-              <tr><td>M3, M4</td><td>NMOS mirror load</td><td class="num">9.73</td><td class="num">0.889</td><td class="num">0.699</td><td class="num">0.209</td><td class="num">79.8</td></tr>
-              <tr><td>M5</td><td>PMOS tail source</td><td class="num">19.5</td><td class="num">0.98</td><td class="num">0.79</td><td class="num">0.193</td><td class="num">170</td></tr>
-              <tr><td>M6</td><td>NMOS second stage</td><td class="num">40.9</td><td class="num">0.889</td><td class="num">0.707</td><td class="num">&mdash;</td><td class="num">337</td></tr>
-              <tr><td>M7</td><td>PMOS second-stage load</td><td class="num">40.9</td><td class="num">0.98</td><td class="num">0.79</td><td class="num">0.194</td><td class="num">356</td></tr>
-              <tr><td>M8</td><td>Diode-connected reference</td><td class="num">20.0</td><td class="num">0.98</td><td class="num">0.79</td><td class="num">0.193</td><td class="num">174</td></tr>
+              <tr><td>Phase margin spread within a corner</td><td class="num">6.5&ndash;6.9&deg;</td><td class="num">0.4&ndash;0.7&deg;</td></tr>
+              <tr><td>Phase margin, total spread</td><td class="num">10.9&deg;</td><td class="num">3.9&deg;</td></tr>
+              <tr><td>Worst-case phase margin</td><td class="num">60.8&deg;</td><td class="num">63.4&deg;</td></tr>
+              <tr><td>Gain margin range</td><td class="num">20.1 to 40.9 dB</td><td class="num">30.3 to 36.5 dB</td></tr>
+              <tr><td>Unity-gain frequency range</td><td class="num">28.2 to 44.0 MHz</td><td class="num">27.7 to 43.2 MHz</td></tr>
             </tbody>
           </table>
         </div>
+
+        <div class="table-scroll">
+          <table class="spec">
+            <caption>Operating point (LTspice .op, all devices L = 0.56 &micro;m)</caption>
+            <thead><tr><th>Device</th><th>Role</th><th>W (&micro;m)</th><th>I<sub>D</sub> (&micro;A)</th><th>|V<sub>GS</sub>| (V)</th><th>|V<sub>DS</sub>| (V)</th><th>|V<sub>th</sub>| (V)</th><th>V<sub>dsat</sub> (V)</th><th>g<sub>m</sub> (&micro;S)</th><th>g<sub>ds</sub> (&micro;S)</th></tr></thead>
+            <tbody>
+              <tr><td>M1, M2</td><td>PMOS input pair</td><td class="num">6.85</td><td class="num">9.73</td><td class="num">1.17</td><td class="num">1.93</td><td class="num">0.983</td><td class="num">0.202</td><td class="num">86.5</td><td class="num">0.274</td></tr>
+              <tr><td>M3, M4</td><td>NMOS mirror load</td><td class="num">1.68</td><td class="num">9.73</td><td class="num">0.889</td><td class="num">0.889</td><td class="num">0.699</td><td class="num">0.209</td><td class="num">79.8</td><td class="num">0.572</td></tr>
+              <tr><td>M5</td><td>PMOS tail source</td><td class="num">13.7</td><td class="num">19.5</td><td class="num">0.98</td><td class="num">0.483</td><td class="num">0.79</td><td class="num">0.193</td><td class="num">170</td><td class="num">1.50</td></tr>
+              <tr><td>M6</td><td>NMOS second stage</td><td class="num">13.44</td><td class="num">81.9</td><td class="num">0.889</td><td class="num">1.62</td><td class="num">0.708</td><td class="num">0.203</td><td class="num">676</td><td class="num">3.23</td></tr>
+              <tr><td>M7</td><td>PMOS second-stage load</td><td class="num">54.8</td><td class="num">81.9</td><td class="num">0.98</td><td class="num">1.68</td><td class="num">0.79</td><td class="num">0.194</td><td class="num">712</td><td class="num">2.38</td></tr>
+              <tr><td>M8</td><td>Diode-connected reference</td><td class="num">13.7</td><td class="num">20.0</td><td class="num">0.98</td><td class="num">0.98</td><td class="num">0.79</td><td class="num">0.193</td><td class="num">174</td><td class="num">0.847</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="small muted">Still to come: CMRR, small-step response, and a side-by-side comparison with the folded cascode.</p>
       </div>
     </section>
 
@@ -117,6 +154,6 @@
       </nav>
     </div>
   </footer>
-  <script src="site.js"></script>
+  <script src="site.js?v=2"></script>
 </body>
 </html>
