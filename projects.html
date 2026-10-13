@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
   <header class="site-header">
@@ -39,11 +39,11 @@
           <li><a class="row" href="project-opamp.html">
             <div>
               <h3>Two-stage Miller-compensated op-amp</h3>
-              <p>Sedra/Smith Example 13.1 topology. PMOS differential pair with an NMOS mirror load, NMOS common-source second stage,
-                and R<sub>z</sub>&ndash;C<sub>c</sub> compensation placed to cancel the right-half-plane zero.</p>
-              <span class="status wip">Complete; corner and slew-rate report in progress</span>
+              <p>Sedra/Smith Example 13.1 topology. Compensation sized for phase margin, then re-sized when a large step showed the second
+                stage cutting off. Compares an ideal nulling resistor with a triode transistor that tracks g<sub>m6</sub> across process and temperature.</p>
+              <span class="status wip">Complete; CMRR in progress</span>
             </div>
-            <dl class="facts"><dt>Gain</dt><dd>81 dB</dd><dt>GBW</dt><dd>29 MHz</dd><dt>Phase margin</dt><dd>60.6&deg;</dd><dt>I<sub>REF</sub></dt><dd>20 &micro;A</dd></dl>
+            <dl class="facts"><dt>Gain</dt><dd>81.8 dB</dd><dt>f<sub>t</sub></dt><dd>35 MHz</dd><dt>Phase margin</dt><dd>65.3&deg;</dd><dt>Worst-case PM</dt><dd>63.4&deg;</dd></dl>
           </a></li>
           <li><a class="row" href="project-cascode.html">
             <div>
@@ -56,10 +56,12 @@
           </a></li>
           <li><a class="row" href="project-bgr.html">
             <div>
-              <h3>Bandgap reference</h3>
-              <p>A temperature-independent voltage reference using BJTs and resistors.</p>
+              <h3>Bandgap voltage reference</h3>
+              <p>A temperature-stable reference built from a PTAT current and a CTAT base&ndash;emitter voltage, designed from Razavi chapter 12
+                and verified with temperature sweeps.</p>
+              <span class="status wip">In progress</span>
             </div>
-            <dl class="facts"><dt>Reference</dt><dd>Razavi ch. 12</dd></dl>
+            <dl class="facts"><dt>Reference</dt><dd>Razavi ch. 12</dd><dt>Process</dt><dd>GF180MCU</dd></dl>
           </a></li>
         </ul>
       </div>
@@ -87,12 +89,12 @@
     <div class="wrap">
       <span>&copy; 2026 Randy</span>
       <nav aria-label="Elsewhere">
-        <a href="mailto:r4bedi@uwaterloo.ca">Email</a>
+        <a href="ailto:r4bedi@uwaterloo.ca"">Email</a>
         <a href="https://www.linkedin.com/in/randeep-bedi/" rel="noopener">LinkedIn</a>
         <a href="http://github.com/randeepb21" rel="noopener">GitHub</a>
       </nav>
     </div>
   </footer>
-  <script src="site.js"></script>
+  <script src="site.js?v=3"></script>
 </body>
 </html>
