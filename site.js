@@ -186,9 +186,14 @@
     img.addEventListener("error", hide);
   });
 
-  /* ---------------- Lightbox ---------------- */
-  const buttons = Array.from(document.querySelectorAll(".gallery button"));
-  if (buttons.length) {
+  /* ---------------- Lightbox ----------------
+     Opens any gallery thumbnail or figure image. Figure images that are
+     hidden (file not uploaded yet) are skipped when paging. */
+  const triggers = Array.from(document.querySelectorAll(".gallery button, figure.figure:not(.bode) img"));
+  const imgOf = (t) => (t.tagName === "IMG" ? t : t.querySelector("img"));
+  const visible = () => triggers.filter((t) => !t.closest("figure[hidden]"));
+
+  if (triggers.length) {
     const lb = document.createElement("div");
     lb.className = "lightbox";
     lb.setAttribute("role", "dialog");
@@ -203,18 +208,21 @@
     document.body.appendChild(lb);
     const big = lb.querySelector("img");
     const count = lb.querySelector(".lb-count");
-    let i = 0, opener = null;
+    const prev = lb.querySelector(".lb-prev"), next = lb.querySelector(".lb-next");
+    let list = [], i = 0, opener = null;
 
     const show = (n) => {
-      i = (n + buttons.length) % buttons.length;
-      const img = buttons[i].querySelector("img");
-      big.src = img.src;
+      i = (n + list.length) % list.length;
+      const img = imgOf(list[i]);
+      big.src = img.currentSrc || img.src;
       big.alt = img.alt;
-      count.textContent = `${img.alt} (${i + 1} of ${buttons.length})`;
+      count.textContent = list.length > 1 ? `${img.alt} (${i + 1} of ${list.length})` : img.alt;
     };
-    const open = (n) => {
+    const open = (t) => {
+      list = visible();
       opener = document.activeElement;
-      show(n);
+      prev.hidden = next.hidden = list.length < 2;
+      show(list.indexOf(t));
       lb.classList.add("open");
       document.body.style.overflow = "hidden";
       lb.querySelector(".lb-close").focus();
@@ -225,20 +233,32 @@
       if (opener) opener.focus();
     };
 
-    buttons.forEach((b, n) => b.addEventListener("click", () => open(n)));
+    triggers.forEach((t) => {
+      if (t.tagName === "IMG") {          // figure image: make it behave like a button
+        t.classList.add("zoomable");
+        t.tabIndex = 0;
+        t.setAttribute("role", "button");
+        t.setAttribute("aria-label", "Enlarge: " + t.alt);
+        t.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(t); }
+        });
+      }
+      t.addEventListener("click", () => open(t));
+    });
     lb.querySelector(".lb-close").addEventListener("click", close);
-    lb.querySelector(".lb-prev").addEventListener("click", () => show(i - 1));
-    lb.querySelector(".lb-next").addEventListener("click", () => show(i + 1));
+    prev.addEventListener("click", () => show(i - 1));
+    next.addEventListener("click", () => show(i + 1));
     lb.addEventListener("click", (e) => { if (e.target === lb) close(); });
     document.addEventListener("keydown", (e) => {
       if (!lb.classList.contains("open")) return;
       if (e.key === "Escape") close();
-      else if (e.key === "ArrowRight") show(i + 1);
-      else if (e.key === "ArrowLeft") show(i - 1);
+      else if (e.key === "ArrowRight" && list.length > 1) show(i + 1);
+      else if (e.key === "ArrowLeft" && list.length > 1) show(i - 1);
     });
     let x0 = 0;
     lb.addEventListener("touchstart", (e) => { x0 = e.changedTouches[0].screenX; }, { passive: true });
     lb.addEventListener("touchend", (e) => {
+      if (list.length < 2) return;
       const dx = e.changedTouches[0].screenX - x0;
       if (dx < -50) show(i + 1); else if (dx > 50) show(i - 1);
     });
