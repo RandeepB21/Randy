@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
   <header class="site-header">
@@ -33,11 +33,12 @@
             GF180MCU open PDK, and applying for an MASc in analog and mixed-signal IC design for Fall 2027.</p>
           <p class="small muted" style="margin-top:1.2em"><a href="projects.html">See the work</a> or <a href="resume.pdf" target="_blank" rel="noopener">download my résumé</a>.</p>
         </div>
-      <figure class="figure bode" data-a0db="81" data-p1="2585" data-p2="44.9e6">
+      <figure class="figure bode" data-a0db="81.8" data-p1="3100" data-p2="80e6" data-p3="1.825e9" data-phmin="-225">
         <div class="plot"></div>
         <div class="readout" aria-live="off"></div>
-        <figcaption><b>Two-stage Miller op-amp, open-loop response.</b> Drawn from a two-pole model fitted to the LTspice results
-          (A<sub>0</sub> 81 dB, GBW 29 MHz, PM 60.6&deg;), with the right-half-plane zero cancelled by R<sub>z</sub> = 1/G<sub>m2</sub>. Hover or tap to read off any frequency.</figcaption>
+        <figcaption><b>Two-stage Miller op-amp, open-loop response.</b> Final design with the triode-transistor nulling resistor and
+          C<sub>C</sub> = 350 fF. Drawn from a three-pole model fitted to the LTspice results (81.8 dB, 3.12 kHz, f<sub>t</sub> 35.0 MHz,
+          PM 65.3&deg;). Hover or tap to read off any frequency.</figcaption>
       </figure>
       </div>
     </section>
@@ -49,9 +50,9 @@
           <li><a class="row" href="project-opamp.html">
             <div>
               <h3>Two-stage Miller-compensated op-amp</h3>
-              <p>PMOS-input two-stage OTA with nulling-resistor compensation, sized from first principles and verified in DC, AC and transient simulation.</p>
+              <p>PMOS-input two-stage op-amp with Miller compensation, where a triode transistor stands in for the nulling resistor and holds phase margin within 4&deg; across all corners.</p>
             </div>
-            <dl class="facts"><dt>Gain</dt><dd>81 dB</dd><dt>GBW</dt><dd>29 MHz</dd><dt>Phase margin</dt><dd>60.6&deg;</dd></dl>
+            <dl class="facts"><dt>Gain</dt><dd>81.8 dB</dd><dt>f<sub>t</sub></dt><dd>35 MHz</dd><dt>Phase margin</dt><dd>65.3&deg;</dd></dl>
           </a></li>
           <li><a class="row" href="project-cascode.html">
             <div>
@@ -108,6 +109,6 @@
       </nav>
     </div>
   </footer>
-  <script src="site.js"></script>
+  <script src="site.js?v=2"></script>
 </body>
 </html>
