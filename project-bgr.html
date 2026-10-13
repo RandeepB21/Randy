@@ -1,110 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BGR Project</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .modal img {
-      max-width: 80%;
-      max-height: 80%;
-    }
-    .modal-close {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      font-size: 40px;
-      color: white;
-      cursor: pointer;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bandgap reference | Randy</title>
+  <meta name="description" content="Bandgap voltage reference on GF180MCU, in progress: PTAT and CTAT generation, zero-order bandgap and temperature sweep.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
-  <div class="navbar">
-    <div>
-      <a class="nav-link" href="index.html">Home</a>
-      <a class="nav-link" href="projects.html">Projects</a>
-      <a class="nav-link" href="tools.html">Tools</a>
-      <a class="nav-link" href="contact.html">Contact</a>
-      <a class="nav-link" href="resume.pdf" target="_blank">Resume</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="site-name" href="index.html">Randy <span>Analog IC design</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="projects.html" aria-current="page">Work</a>
+        <a href="tools.html">Tools</a>
+        <a href="contact.html">Contact</a>
+        <a href="resume.pdf" target="_blank" rel="noopener">Résumé</a>
+      </nav>
     </div>
-  </div>
+  </header>
 
-  <div class="project-detail">
-    <h1>Bandgap Reference (BGR)</h1>
-    <p class="project-tagline">A temperature-independent voltage reference using two BJTs and three resistors with an op-amp.</p>
+  <main>
+    <section class="hero project-head">
+      <div class="wrap">
+        <p class="crumb"><a href="projects.html">Work</a></p>
+        <h1>Bandgap voltage reference</h1>
+        <p class="lede">A reference voltage that holds steady over temperature by adding a PTAT term, which rises with temperature, to a
+          base&ndash;emitter voltage, which falls with it. This design is in progress; results will be posted here as each stage is verified.</p>
+        <div class="meta"><span><b>Process</b> GF180MCU open PDK</span><span><b>Tools</b> LTspice</span><span><b>Reference</b> Razavi ch. 12</span><span class="status wip" style="margin-top:0">In progress</span></div>
+      </div>
+    </section>
 
-    <!-- LTspice Simulation -->
-    <div class="project-section">
-      <h2>LTspice Simulation</h2>
-      <img class="project-image" src="images/bgr-sim.png" alt="BGR LTspice Simulation" />
+    <section style="padding-top:40px">
+      <div class="wrap split">
+        <h2>Build plan</h2>
+        <ol class="roadmap">
+          <li><div>PTAT current generator<span>Two bipolar branches at different current densities, so their V<sub>BE</sub> difference scales with absolute temperature.</span></div></li>
+          <li><div>CTAT branch<span>Characterise V<sub>BE</sub> against temperature in the PDK to find its slope.</span></div></li>
+          <li><div>Zero-order bandgap<span>Weight the PTAT and CTAT terms so their temperature slopes cancel at room temperature.</span></div></li>
+          <li><div>Curvature correction<span>Optional: reduce the residual second-order drift left after first-order cancellation.</span></div></li>
+          <li><div>Temperature sweep<span>Measure output voltage and drift in ppm/&deg;C from &minus;40 to 125&nbsp;&deg;C, then across process corners.</span></div></li>
+        </ol>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>&copy; 2026 Randy</span>
+      <nav aria-label="Elsewhere">
+        <a href="mailto:r4bedi@uwaterloo.ca">Email</a>
+        <a href="https://www.linkedin.com/in/randeep-bedi/" rel="noopener">LinkedIn</a>
+        <a href="http://github.com/randeepb21" rel="noopener">GitHub</a>
+      </nav>
     </div>
-
-    <!-- PCB Design -->
-    <div class="project-section">
-      <h2>PCB Design</h2>
-      <img class="project-image" src="images/bgr-pcb.png" alt="BGR PCB" />
-    </div>
-
-    <div class="project-section">
-      <h2>Description</h2>
-      <p>This circuit combines a PTAT and CTAT voltage to create a stable output reference. The op-amp maintains a constant current across the resistors and BJTs, and the result is a ~1.2V reference.</p>
-    </div>
-
-    <div class="project-section">
-      <h2>Key Features</h2>
-      <ul>
-        <li>PTAT and CTAT cancellation</li>
-        <li>Simulation of temperature sweep in LTspice</li>
-        <li>Designed PCB using KiCad</li>
-      </ul>
-    </div>
-
-    <a class="back-link" href="projects.html">← Back to Projects</a>
-  </div>
-
-  <!-- Single Modal Lightbox -->
-  <div class="modal" id="image-modal">
-    <span class="modal-close" onclick="closeModal()">&times;</span>
-    <img id="modal-img" />
-  </div>
-
-  <script>
-    const modal = document.getElementById("image-modal");
-    const modalImg = document.getElementById("modal-img");
-
-    document.querySelectorAll('img').forEach(img => {
-      img.addEventListener('click', () => {
-        modal.style.display = "flex";
-        modalImg.src = img.src;
-      });
-    });
-
-    function closeModal() {
-      modal.style.display = "none";
-    }
-
-    window.addEventListener("click", (e) => {
-      if (e.target === modal) closeModal();
-    });
-  </script>
-
-  <footer>
-    <p>&copy; 2025 Randy's Analog Design Portfolio</p>
   </footer>
-<script src="waveform.js"></script>
+  <script src="site.js?v=3"></script>
 </body>
 </html>
