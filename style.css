@@ -236,3 +236,10 @@ section + section { border-top: 1px solid var(--rule); }
 .project-detail img { border: 1px solid var(--rule); border-radius: 4px; margin: 16px 0; max-width: 100%; height: auto; }
 .project-detail ul { padding-left: 1.2em; }
 footer:not(.site-footer) { border-top: 1px solid var(--rule); padding: 22px var(--gutter); color: var(--ink-3); font-size: 0.9rem; }
+
+/* ---------- Figure images: capped height, click to enlarge ---------- */
+.figure img { display: block; margin: 0 auto; max-width: 100%; height: auto; max-height: 460px; object-fit: contain; }
+.figure img.zoomable { cursor: zoom-in; }
+.figure img.zoomable:focus-visible { outline: 2px solid var(--mag); outline-offset: 3px; }
+.figure.fig-sm img { max-height: 300px; }
+.lightbox button[hidden] { display: none; }
