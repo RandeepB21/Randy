@@ -30,6 +30,9 @@
   const K = (M.KP * M.W) / M.L;
   const state = { vgs: 1.0, vds: 1.5 };
   let IV = null;                                  // { vgs: [...], c: [{ v: [...], i: [...] }], vth }
+  // V_th from the LTspice operating point, if given on the figure (data-vth). It overrides
+  // the value extracted from the sweep, so the page matches the .op numbers in the reports.
+  const VTH_OP = el.dataset.vth ? parseFloat(el.dataset.vth) : null;
 
   function squareLaw(vgs, vds) {
     const vov = vgs - M.VTH;
@@ -63,7 +66,7 @@
   }
 
   function model(vgs, vds) {
-    const vth = IV ? IV.vth : M.VTH;
+    const vth = VTH_OP !== null ? VTH_OP : IV ? IV.vth : M.VTH;
     const vov = vgs - vth;
     let id, gm;
     if (IV) {
@@ -392,7 +395,9 @@
       `<span>I<sub>D</sub> <b>${fmtI(m.id)}</b></span>` +
       `<span>g<sub>m</sub> <b>${fmtG(m.gm)}</b></span>` +
       `<span class="region">Region <b>${m.region}</b></span>` +
-      `<span class="src">V<sub>th</sub> <b>${m.vth.toFixed(3)} V</b> ${IV ? "from LTspice sweep" : "<i>square-law model</i>"}</span>`;
+      `<span class="src">V<sub>th</sub> <b>${m.vth.toFixed(3)} V</b> ` +
+      (VTH_OP !== null ? "(LTspice .op)" : IV ? "(extracted from sweep)" : "") +
+      (IV ? "" : " <i>square-law model</i>") + `</span>`;
     presetBtns.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.region === m.region)));
     for (const key in knobs) knobs[key].describe(m);
     if (reduce) { parts = []; acc = 0; settle(6); draw(true); }
