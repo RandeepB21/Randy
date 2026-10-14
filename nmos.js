@@ -430,13 +430,26 @@
       node.setAttribute("aria-valuetext", `${state[key].toFixed(2)} volts, ${m.region}, drain current ${fmtI(m.id)}`);
     }
 
-    let y0 = 0, x0 = 0, v0 = 0;
+    // Drag by turning: follow the pointer's angle around the knob centre, like a real knob.
+    // 270 degrees of rotation covers the full range.
+    let cx = 0, cy = 0, lastA = 0, turned = 0, v0 = 0;
+    const angleOf = (e) => (Math.atan2(e.clientX - cx, cy - e.clientY) * 180) / Math.PI;   // 0 at top, clockwise +
     node.addEventListener("pointerdown", (e) => {
-      node.setPointerCapture(e.pointerId); y0 = e.clientY; x0 = e.clientX; v0 = state[key]; e.preventDefault(); node.focus();
+      const r = node.getBoundingClientRect();
+      cx = r.left + r.width / 2; cy = r.top + r.height / 2;
+      lastA = angleOf(e); turned = 0; v0 = state[key];
+      node.setPointerCapture(e.pointerId); e.preventDefault(); node.focus();
     });
     node.addEventListener("pointermove", (e) => {
       if (!node.hasPointerCapture(e.pointerId)) return;
-      set(v0 + ((y0 - e.clientY) + (e.clientX - x0)) * ((max - min) / 220));
+      if (Math.hypot(e.clientX - cx, e.clientY - cy) < 8) return;                         // too close to the centre to read an angle
+      const a = angleOf(e);
+      let d = a - lastA;
+      if (d > 180) d -= 360; else if (d < -180) d += 360;
+      lastA = a;
+      turned += d;
+      set(v0 + (turned / 270) * (max - min));
+      turned = ((state[key] - v0) / (max - min)) * 270;                                   // no wind-up past the end stops
     });
     node.addEventListener("keydown", (e) => {
       const big = (max - min) / 10;
