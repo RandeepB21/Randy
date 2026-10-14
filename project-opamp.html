@@ -8,8 +8,9 @@
   <meta name="color-scheme" content="light dark">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
   <header class="site-header">
@@ -32,19 +33,44 @@
         <p class="lede">A PMOS-input two-stage op-amp, compensated twice over: once for small-signal stability, then again when a large step
           showed the second stage cutting off. The nulling resistor is built two ways, as an ideal resistor and as a transistor in triode,
           and the transistor version holds its phase margin far better across process and temperature.</p>
-        <div class="meta"><span><b>Process</b> GF180MCU open PDK, 3.3 V</span><span><b>Tools</b> LTspice</span><span><b>Load</b> 1 pF</span><span><b>Reference</b> Sedra/Smith, Razavi</span></div>
+        <div class="meta"><span><b>Process</b> GF180MCU open PDK, 3.3 V</span><span><b>Tools</b> LTspice</span><span><b>Load</b> 1 pF</span><span><b>Reference</b> Sedra/Smith, Razavi</span><a class="report-link" href="reports/two-stage-opamp.pdf" target="_blank" rel="noopener" hidden><b>Full report (PDF)</b></a></div>
       </div>
     </section>
 
-    <section style="padding-top:0">
+    <section>
       <div class="wrap stack">
-      <figure class="figure bode" data-a0db="81.8" data-p1="3100" data-p2="80e6" data-p3="1.825e9" data-phmin="-225">
-        <div class="plot"></div>
-        <div class="readout" aria-live="off"></div>
-        <figcaption><b>Two-stage Miller op-amp, open-loop response.</b> Final design with the triode-transistor nulling resistor and
-          C<sub>C</sub> = 350 fF. Drawn from a three-pole model fitted to the LTspice results (81.8 dB, 3.12 kHz, f<sub>t</sub> 35.0 MHz,
-          PM 65.3&deg;). Hover or tap to read off any frequency.</figcaption>
-      </figure>
+        <figure class="instrument comp-demo" data-comp-demo data-sweep-rz="data/twostage_rz_sweep.txt" data-sweep-mz="data/twostage_mz_sweep.txt">
+          <div class="inst-bezel bode" data-live data-phmin="-270">
+            <div class="plot"></div>
+            <div class="readout" aria-live="off"></div>
+            <div class="comp-zero" aria-live="off"></div>
+          </div>
+          <div class="inst-controls">
+            <div class="knobs">
+              <div class="knob-wrap">
+                <div class="knob" data-param="cc" aria-label="Compensation capacitor C C"></div>
+                <span class="ctl-label">C<sub>C</sub></span>
+                <span class="ctl-value">350 fF</span>
+              </div>
+            </div>
+            <div class="presets no-caps" role="group" aria-label="Nulling resistor">
+              <span class="ctl-label">Nulling resistor</span>
+              <button type="button" data-rz="none">None</button>
+              <button type="button" data-rz="ideal">R = 1/g<sub>m6</sub></button>
+              <button type="button" data-rz="mz">Triode M<sub>Z</sub></button>
+            </div>
+            <div class="presets no-caps" role="group" aria-label="Design steps from the report">
+              <span class="ctl-label">Design steps</span>
+              <button type="button" data-preset-cc="0" data-preset-rz="none">Uncompensated</button>
+              <button type="button" data-preset-cc="233.8" data-preset-rz="ideal">C<sub>C</sub> = 233.8 fF</button>
+              <button type="button" data-preset-cc="350" data-preset-rz="mz">Final, 350 fF + M<sub>Z</sub></button>
+            </div>
+          </div>
+          <figcaption><b>Turn C<sub>C</sub> or switch the nulling resistor.</b> The knob clicks through the C<sub>C</sub> values I swept in LTspice,
+            and each curve is read straight from that simulation&rsquo;s exported AC response (TT, 27&nbsp;&deg;C, C<sub>L</sub> = 1 pF).
+            If a sweep isn&rsquo;t available, that setting falls back to a small-signal model fitted to my simulations, and the readout says so.
+            The design steps retrace the report: unstable without compensation, 57.2&deg; at 233.8 fF, then the final 350 fF design.</figcaption>
+        </figure>
 
         <figure class="figure optional">
           <img src="images/opamp-schematic.png" alt="Schematic of the two-stage op-amp with compensation capacitor and triode-transistor nulling resistor">
@@ -163,14 +189,16 @@
 
   <footer class="site-footer">
     <div class="wrap">
-      <span>&copy; 2026 Randy</span>
+      <span class="foot-left"><span>&copy; 2026 Randy</span>
+        <span class="cal-sticker" title="Date this site was last updated"><b>Calibrated</b> <time datetime="2026-10-13">13 Oct 2026</time></span></span>
       <nav aria-label="Elsewhere">
-        <a href="mailto:r4bedi@uwaterloo.ca">Email</a>
-        <a href="https://www.linkedin.com/in/randeep-bedi" rel="noopener">LinkedIn</a>
+        <a href="mailto:4bedi@uwaterloo.ca">Email</a>
+        <a href="https://www.linkedin.com/in/randeep-bedi/" rel="noopener">LinkedIn</a>
         <a href="http://github.com/randeepb21" rel="noopener">GitHub</a>
       </nav>
     </div>
   </footer>
-  <script src="site.js?v=3"></script>
+  <script src="site.js?v=8"></script>
+  <script src="comp.js?v=8"></script>
 </body>
 </html>
