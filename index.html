@@ -35,7 +35,7 @@
           <p class="small muted" style="margin-top:1.2em"><a href="projects.html">See the work</a> or <a href="resume.pdf" target="_blank" rel="noopener">download my résumé</a>.</p>
         </div>
 
-        <figure class="instrument" data-nmos data-iv="data/nmos_iv.txt">
+        <figure class="instrument" data-nmos data-iv="data/nmos_iv.txt" data-vth="0.706">
           <div class="inst-bezel">
             <div class="screen inst-screen">
               <canvas role="img" aria-label="NMOS transistor shown as a silicon cross-section and as a circuit symbol. Electrons flow from source to drain through the inversion channel; the drain current flows from drain to source."></canvas>
@@ -63,12 +63,11 @@
             </div>
           </div>
           <figcaption><b>Turn the knobs.</b> An NMOS with W/L = 5.04/0.56 &micro;m, the input device of my folded cascode. I<sub>D</sub> and
-            g<sub>m</sub> are read from an LTspice DC sweep of the GF180MCU BSIM model, and V<sub>th</sub> is extracted from the same sweep by
-            maximum-g<sub>m</sub> extrapolation. Regions use the textbook boundaries (V<sub>GS</sub> = V<sub>th</sub>,
-            V<sub>DS</sub> = V<sub>GS</sub> &minus; V<sub>th</sub>), so near an edge they are approximate. Electrons (green) speed up as the
-            channel thins toward the drain; past pinch-off the current (amber) barely changes.</figcaption>
+            g<sub>m</sub> are read from an LTspice DC sweep of the GF180MCU BSIM model. V<sub>th</sub> = 0.706 V is from the LTspice operating
+            point at V<sub>GS</sub> = V<sub>DS</sub> = 1 V; region boundaries use V<sub>GS</sub> &minus; V<sub>th</sub>, so they are approximate
+            near the edges. Electrons (green) speed up as the channel thins toward the drain; past pinch-off the current (amber) barely changes.</figcaption>
         </figure>
-        <script src="nmos.js?v=9"></script>
+        <script src="nmos.js?v=10"></script>
       </div>
     </section>
 
