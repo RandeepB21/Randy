@@ -191,11 +191,24 @@
     if (changed) { knob.classList.remove("click"); void knob.offsetWidth; knob.classList.add("click"); }
     redraw();
   }
-  let y0 = 0, x0 = 0, i0 = 0;
-  knob.addEventListener("pointerdown", (e) => { knob.setPointerCapture(e.pointerId); y0 = e.clientY; x0 = e.clientX; i0 = idx; e.preventDefault(); knob.focus(); });
+  // Drag by turning: follow the pointer's angle around the knob centre; each stop is `span` degrees.
+  let cx = 0, cy = 0, lastA = 0, turned = 0, i0 = 0;
+  const angleOf = (e) => (Math.atan2(e.clientX - cx, cy - e.clientY) * 180) / Math.PI;     // 0 at top, clockwise +
+  knob.addEventListener("pointerdown", (e) => {
+    const r = knob.getBoundingClientRect();
+    cx = r.left + r.width / 2; cy = r.top + r.height / 2;
+    lastA = angleOf(e); turned = 0; i0 = idx;
+    knob.setPointerCapture(e.pointerId); e.preventDefault(); knob.focus();
+  });
   knob.addEventListener("pointermove", (e) => {
     if (!knob.hasPointerCapture(e.pointerId)) return;
-    setIdx(i0 + ((y0 - e.clientY) + (e.clientX - x0)) / 18);       // one stop per 18 px of drag
+    if (Math.hypot(e.clientX - cx, e.clientY - cy) < 8) return;
+    const a = angleOf(e);
+    let d = a - lastA;
+    if (d > 180) d -= 360; else if (d < -180) d += 360;
+    lastA = a;
+    turned = Math.min((n - 1 - i0) * span, Math.max(-i0 * span, turned + d));          // no wind-up past the end stops
+    setIdx(i0 + turned / span);
   });
   knob.addEventListener("keydown", (e) => {
     const moves = { ArrowUp: 1, ArrowRight: 1, ArrowDown: -1, ArrowLeft: -1, PageUp: 3, PageDown: -3 };
