@@ -383,3 +383,5 @@ a.report-link[hidden] { display: none; }
   .knob.click .cap { animation: knob-click 120ms ease-out; }
   @keyframes knob-click { 50% { filter: brightness(1.25); } }
 }
+.nmos-readout .src { opacity: 0.85; }
+.nmos-readout .src i { font-style: normal; color: var(--amber); }
