@@ -1,5 +1,5 @@
 /* Shared behaviour for every page:
-   1. Bode plot (measured data, or a pole/zero model) with hover/touch readout
+   1. Bode plot (measured data, a pole/zero model, or a live model) with hover/touch readout
    2. Accessible image lightbox for .gallery groups
    3. Optional figures that hide themselves if the image is missing */
 
@@ -19,78 +19,37 @@
   }
   const minus = (s) => String(s).replace("-", "−");
 
-  /* ---------------- Bode plot ---------------- */
-  function initBode(el) {
-    const A0 = Math.pow(10, parseFloat(el.dataset.a0db) / 20);
-    const p1 = parseFloat(el.dataset.p1);
-    const p2 = parseFloat(el.dataset.p2);
-    const p3 = el.dataset.p3 ? parseFloat(el.dataset.p3) : Infinity; // optional third pole
-    const z = el.dataset.z ? parseFloat(el.dataset.z) : Infinity; // RHP zero; Infinity = cancelled
-
-    // Either measured data (a <script class="bode-data"> holding [[f, dB, deg], ...])
-    // or the pole/zero model above.
-    const dataEl = el.querySelector("script.bode-data");
-    let H;
-    if (dataEl) {
-      const pts = JSON.parse(dataEl.textContent);
-      const lf = pts.map((r) => Math.log10(r[0]));
-      H = (f) => {
-        const x = Math.log10(f);
-        if (x <= lf[0]) return { db: pts[0][1], deg: pts[0][2] };
-        if (x >= lf[lf.length - 1]) { const r = pts[pts.length - 1]; return { db: r[1], deg: r[2] }; }
-        let i = 1;
-        while (lf[i] < x) i++;
-        const t = (x - lf[i - 1]) / (lf[i] - lf[i - 1]);
-        return { db: pts[i - 1][1] + t * (pts[i][1] - pts[i - 1][1]),
-                 deg: pts[i - 1][2] + t * (pts[i][2] - pts[i - 1][2]) };
-      };
-    } else {
-      H = (f) => {
-        const w1 = f / p1, w2 = f / p2, w3 = f / p3, wz = f / z;
-        const mag = A0 * Math.sqrt(1 + wz * wz) /
-          (Math.sqrt(1 + w1 * w1) * Math.sqrt(1 + w2 * w2) * Math.sqrt(1 + w3 * w3));
-        const ph = -Math.atan(wz) - Math.atan(w1) - Math.atan(w2) - Math.atan(w3); // RHP zero adds lag
-        return { db: 20 * Math.log10(mag), deg: ph * 180 / Math.PI };
-      };
-    }
-
-    // unity-gain frequency by bisection in log space
+  /* ---------------- Bode plot ----------------
+     makeBode(el, H, opts) draws into el's .plot and .readout and returns
+     { update(H) } so a live page can redraw it. H(f) -> { db, deg } with
+     continuous (unwrapped) phase. */
+  function makeBode(el, H, opts = {}) {
     const fmin = parseFloat(el.dataset.fmin || 10), fmax = 1e9;
-    let lo = fmin, hi = fmax;
-    for (let i = 0; i < 80; i++) {
-      const mid = Math.sqrt(lo * hi);
-      if (H(mid).db > 0) lo = mid; else hi = mid;
-    }
-    const fu = Math.sqrt(lo * hi);
-    const pm = 180 + H(fu).deg;
-
-    // geometry
     const W = el.clientWidth && el.clientWidth < 560 ? 480 : 760, L = 54, R = 16;
     const mag = { top: 14, bot: 214, min: -60, max: 100, step: 20 };
     const ph = { top: 252, bot: 412, min: parseFloat(el.dataset.phmin || -180), max: 0, step: 45 };
     const X = (f) => L + (Math.log10(f) - Math.log10(fmin)) / (Math.log10(fmax) - Math.log10(fmin)) * (W - L - R);
     const Finv = (x) => Math.pow(10, Math.log10(fmin) + (x - L) / (W - L - R) * (Math.log10(fmax) - Math.log10(fmin)));
     const Y = (p, v) => p.bot - (v - p.min) / (p.max - p.min) * (p.bot - p.top);
+    const clampY = (p, v) => Math.max(p.top, Math.min(p.bot, Y(p, v)));
 
     const NS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(NS, "svg");
     svg.setAttribute("viewBox", `0 0 ${W} 454`);
     svg.setAttribute("role", "img");
-    svg.setAttribute("aria-label",
-      `Bode plot. DC gain ${el.dataset.a0db} dB, unity-gain frequency ${fmtFreq(fu)}, phase margin ${pm.toFixed(1)} degrees.`);
     const add = (tag, attrs, parent = svg) => {
       const n = document.createElementNS(NS, tag);
       for (const k in attrs) n.setAttribute(k, attrs[k]);
       parent.appendChild(n);
       return n;
     };
-    const text = (x, y, s, cls, anchor = "end") => {
-      const t = add("text", { x, y, class: cls, "text-anchor": anchor });
+    const text = (x, y, s, cls, anchor = "end", parent = svg) => {
+      const t = add("text", { x, y, class: cls, "text-anchor": anchor }, parent);
       t.textContent = s;
       return t;
     };
 
-    // grids
+    // static grid
     for (let d = Math.round(Math.log10(fmin)); d <= 9; d++) {
       const f = Math.pow(10, d);
       const x = X(f);
@@ -109,56 +68,83 @@
     yt1.setAttribute("transform", `rotate(-90 14 ${(mag.top + mag.bot) / 2})`);
     const yt2 = text(14, (ph.top + ph.bot) / 2, "Phase (°)", "axis-title", "middle");
     yt2.setAttribute("transform", `rotate(-90 14 ${(ph.top + ph.bot) / 2})`);
-    text((L + W - R) / 2, 446, "Frequency (Hz)", "axis-title", "middle").setAttribute("y", 450);
-
-    // reference lines
+    text((L + W - R) / 2, 450, "Frequency (Hz)", "axis-title", "middle");
     add("line", { x1: L, x2: W - R, y1: Y(mag, 0), y2: Y(mag, 0), class: "ref" });
-    add("line", { x1: X(fu), x2: X(fu), y1: mag.top, y2: ph.bot, class: "ref" });
 
-    // traces
-    const N = 400;
-    let dM = "", dP = "";
-    for (let i = 0; i <= N; i++) {
-      const f = Math.pow(10, Math.log10(fmin) + i / N * (Math.log10(fmax) - Math.log10(fmin)));
-      const h = H(f);
-      const ym = Math.max(mag.top, Math.min(mag.bot, Y(mag, h.db)));
-      const yp = Math.max(ph.top, Math.min(ph.bot, Y(ph, h.deg)));
-      dM += (i ? "L" : "M") + X(f).toFixed(1) + " " + ym.toFixed(1);
-      dP += (i ? "L" : "M") + X(f).toFixed(1) + " " + yp.toFixed(1);
-    }
-    const tm = add("path", { d: dM, class: "trace-mag" });
-    const tp = add("path", { d: dP, class: "trace-phase" });
-
-    // annotations: unity-gain point and phase margin
-    add("circle", { cx: X(fu), cy: Y(mag, 0), r: 4, class: "marker" });
-    add("circle", { cx: X(fu), cy: Y(ph, H(fu).deg), r: 4, class: "marker" });
-    text(X(fu) - 8, Y(mag, 0) - 10, "fᵤ = " + fmtFreq(fu), "note");
-    text(X(fu) - 8, Y(ph, H(fu).deg) + 18, "PM = " + pm.toFixed(1) + "°", "note");
-    text(X(fmin) + 10, Y(mag, H(fmin).db) - 10, "A₀ = " + el.dataset.a0db + " dB", "note", "start");
-
-    // cursor
+    const g = add("g", {});                         // everything that depends on H
     const cur = add("line", { y1: mag.top, y2: ph.bot, class: "cursor" });
     const dm = add("circle", { r: 4, class: "dot-mag" });
     const dp = add("circle", { r: 4, class: "dot-phase" });
-
-    const fig = el.querySelector(".plot");
-    fig.appendChild(svg);
-
-    // one-time draw-in
-    for (const p of [tm, tp]) p.style.setProperty("--len", Math.ceil(p.getTotalLength()));
-    el.classList.add("draw");
-
-    // readout
+    el.querySelector(".plot").appendChild(svg);
     const ro = el.querySelector(".readout");
-    const setReadout = (f, h, live) => {
+
+    let st = {};
+    function analyze() {
+      const a0 = H(fmin).db;
+      let fu = null, pm = null, f180 = null, gm = null;
+      if (a0 > 0 && H(fmax).db < 0) {
+        let lo = fmin, hi = fmax;
+        for (let i = 0; i < 80; i++) { const m = Math.sqrt(lo * hi); if (H(m).db > 0) lo = m; else hi = m; }
+        fu = Math.sqrt(lo * hi); pm = 180 + H(fu).deg;
+      }
+      // first -180 degree crossing, found on a sweep then refined
+      let prev = fmin;
+      for (let i = 1; i <= 300; i++) {
+        const f = Math.pow(10, Math.log10(fmin) + i / 300 * (Math.log10(fmax) - Math.log10(fmin)));
+        if (H(f).deg <= -180) {
+          let lo = prev, hi = f;
+          for (let k = 0; k < 60; k++) { const m = Math.sqrt(lo * hi); if (H(m).deg > -180) lo = m; else hi = m; }
+          f180 = Math.sqrt(lo * hi); gm = -H(f180).db; break;
+        }
+        prev = f;
+      }
+      st = { a0, fu, pm, f180, gm };
+    }
+
+    const fmtDeg = (d) => minus(d.toFixed(1)) + "°";
+    function readoutIdle() {
       if (!ro) return;
+      const { fu, pm, gm } = st;
       ro.innerHTML =
-        `<span>${live ? "f" : "Unity gain"} <b>${fmtFreq(f)}</b></span>` +
-        `<span class="k-mag">Gain <b>${minus(h.db.toFixed(1))} dB</b></span>` +
-        `<span class="k-phase">Phase <b>${minus(h.deg.toFixed(1))}°</b></span>` +
-        (live ? "" : `<span>Phase margin <b>${pm.toFixed(1)}°</b></span>`);
-    };
-    setReadout(fu, H(fu), false);
+        (fu ? `<span>Unity gain <b>${fmtFreq(fu)}</b></span>` : "") +
+        (fu ? `<span class="k-phase">Phase <b>${fmtDeg(H(fu).deg)}</b></span>` : "") +
+        (pm !== null ? `<span>Phase margin <b${pm < 0 ? ' class="warn"' : ""}>${fmtDeg(pm)}</b></span>` : "") +
+        (opts.gm && gm !== null ? `<span>Gain margin <b${gm < 0 ? ' class="warn"' : ""}>${minus(gm.toFixed(1))} dB</b></span>` : "") +
+        (pm !== null && pm < 0 ? `<span><b class="warn">Unstable in unity-gain feedback</b></span>` : "");
+    }
+
+    function render(first) {
+      analyze();
+      while (g.firstChild) g.removeChild(g.firstChild);
+      const { a0, fu, pm } = st;
+      if (fu) add("line", { x1: X(fu), x2: X(fu), y1: mag.top, y2: ph.bot, class: "ref" }, g);
+      const N = 400;
+      let dM = "", dP = "";
+      for (let i = 0; i <= N; i++) {
+        const f = Math.pow(10, Math.log10(fmin) + i / N * (Math.log10(fmax) - Math.log10(fmin)));
+        const h = H(f);
+        dM += (i ? "L" : "M") + X(f).toFixed(1) + " " + clampY(mag, h.db).toFixed(1);
+        dP += (i ? "L" : "M") + X(f).toFixed(1) + " " + clampY(ph, h.deg).toFixed(1);
+      }
+      const tm = add("path", { d: dM, class: "trace-mag" }, g);
+      const tp = add("path", { d: dP, class: "trace-phase" }, g);
+      if (fu) {
+        add("circle", { cx: X(fu), cy: Y(mag, 0), r: 4, class: "marker" }, g);
+        add("circle", { cx: X(fu), cy: clampY(ph, H(fu).deg), r: 4, class: "marker" }, g);
+        text(X(fu) - 8, Y(mag, 0) - 10, "fᵤ = " + fmtFreq(fu), "note", "end", g);
+        text(X(fu) - 8, clampY(ph, H(fu).deg) + 18, "PM = " + fmtDeg(pm), pm < 0 ? "note warn" : "note", "end", g);
+      }
+      text(X(fmin) + 10, clampY(mag, a0) - 10, "A₀ = " + a0.toFixed(1) + " dB", "note", "start", g);
+      svg.setAttribute("aria-label", `Bode plot. DC gain ${a0.toFixed(1)} dB` +
+        (fu ? `, unity-gain frequency ${fmtFreq(fu)}, phase margin ${pm.toFixed(1)} degrees.` : "."));
+      if (first) {
+        for (const p of [tm, tp]) p.style.setProperty("--len", Math.ceil(p.getTotalLength()));
+        el.classList.add("draw");
+      } else {
+        el.classList.remove("draw");
+      }
+      readoutIdle();
+    }
 
     const move = (clientX) => {
       const r = svg.getBoundingClientRect();
@@ -166,24 +152,122 @@
       if (x < L || x > W - R) return;
       const f = Finv(x), h = H(f);
       cur.setAttribute("x1", x); cur.setAttribute("x2", x);
-      dm.setAttribute("cx", x); dm.setAttribute("cy", Math.max(mag.top, Math.min(mag.bot, Y(mag, h.db))));
-      dp.setAttribute("cx", x); dp.setAttribute("cy", Math.max(ph.top, Math.min(ph.bot, Y(ph, h.deg))));
+      dm.setAttribute("cx", x); dm.setAttribute("cy", clampY(mag, h.db));
+      dp.setAttribute("cx", x); dp.setAttribute("cy", clampY(ph, h.deg));
       el.classList.add("active");
-      setReadout(f, h, true);
+      if (ro) ro.innerHTML =
+        `<span>f <b>${fmtFreq(f)}</b></span>` +
+        `<span class="k-mag">Gain <b>${minus(h.db.toFixed(1))} dB</b></span>` +
+        `<span class="k-phase">Phase <b>${fmtDeg(h.deg)}</b></span>`;
     };
-    const leave = () => { el.classList.remove("active"); setReadout(fu, H(fu), false); };
+    const leave = () => { el.classList.remove("active"); readoutIdle(); };
     svg.addEventListener("pointermove", (e) => move(e.clientX));
     svg.addEventListener("pointerdown", (e) => move(e.clientX));
     svg.addEventListener("pointerleave", leave);
+
+    render(true);
+    return { update(Hn) { H = Hn; render(false); }, stats: () => st };
   }
 
-  document.querySelectorAll(".bode").forEach(initBode);
+  // Interpolates a table of [f, dB, deg] rows (log frequency).
+  function tableH(pts) {
+    const lf = pts.map((r) => Math.log10(r[0]));
+    return (f) => {
+      const x = Math.log10(f);
+      if (x <= lf[0]) return { db: pts[0][1], deg: pts[0][2] };
+      if (x >= lf[lf.length - 1]) { const r = pts[pts.length - 1]; return { db: r[1], deg: r[2] }; }
+      let lo = 0, hi = lf.length - 1;
+      while (hi - lo > 1) { const m = (lo + hi) >> 1; if (lf[m] < x) lo = m; else hi = m; }
+      const t = (x - lf[lo]) / (lf[hi] - lf[lo]);
+      return { db: pts[lo][1] + t * (pts[hi][1] - pts[lo][1]), deg: pts[lo][2] + t * (pts[hi][2] - pts[lo][2]) };
+    };
+  }
+  /* LTspice "Export data as text" (AC, dB/phase format). Handles plain and .step
+     exports, UTF-8 or UTF-16 files. Returns [{ params, rows: [[f, dB, deg], ...] }]
+     with phase unwrapped and referenced to 0 or 180 degrees at the first point. */
+  const SPICE = { f: 1e-15, p: 1e-12, n: 1e-9, u: 1e-6, "µ": 1e-6, m: 1e-3, k: 1e3, meg: 1e6, g: 1e9, t: 1e12 };
+  function spiceNum(s) {
+    const m = /^([-+]?[\d.]+(?:e[-+]?\d+)?)(meg|[fpnuµmkgt])?/i.exec(String(s).trim());
+    return m ? parseFloat(m[1]) * (m[2] ? SPICE[m[2].toLowerCase()] : 1) : NaN;
+  }
+  function parseLT(text) {
+    const runs = []; let cur = null;
+    for (const line of text.split(/\r?\n/)) {
+      if (/^Step Information:/i.test(line)) {
+        const params = {};
+        line.replace(/\(Run.*$/, "").replace(/(\w+)=(\S+)/g, (_, k, v) => { params[k] = spiceNum(v); });
+        cur = { params, rows: [] }; runs.push(cur); continue;
+      }
+      const m = /^\s*([\d.eE+-]+)\s+\(\s*([\d.eE+-]+)\s*dB\s*,\s*([\d.eE+-]+)/.exec(line);
+      if (!m) continue;
+      if (!cur) { cur = { params: {}, rows: [] }; runs.push(cur); }
+      cur.rows.push([parseFloat(m[1]), parseFloat(m[2]), parseFloat(m[3])]);
+    }
+    for (const r of runs) {
+      let prev = null, off = 0;
+      for (const row of r.rows) {
+        let ph = row[2] + off;
+        if (prev !== null) {
+          while (ph - prev > 180) { off -= 360; ph -= 360; }
+          while (ph - prev < -180) { off += 360; ph += 360; }
+        }
+        row[2] = ph; prev = ph;
+      }
+      if (r.rows.length) {
+        const ref = Math.round(r.rows[0][2] / 180) * 180;
+        if (ref) for (const row of r.rows) row[2] -= ref;
+      }
+    }
+    return runs.filter((r) => r.rows.length > 1);
+  }
+  async function loadLT(url) {
+    const res = await fetch(url, { cache: "no-cache" });
+    if (!res.ok) throw new Error(url + ": " + res.status);
+    const buf = new Uint8Array(await res.arrayBuffer());
+    const utf16 = (buf[0] === 0xff && buf[1] === 0xfe) || (buf.length > 3 && buf[1] === 0 && buf[3] === 0);
+    return parseLT(new TextDecoder(utf16 ? "utf-16le" : "utf-8").decode(buf));
+  }
+
+  window.Bode = { make: makeBode, table: tableH, parseLT, loadLT };
+
+  // Static plots: measured data in a <script class="bode-data">, or a pole/zero model.
+  document.querySelectorAll(".bode:not([data-live])").forEach((el) => {
+    const dataEl = el.querySelector("script.bode-data");
+    let H;
+    if (dataEl) H = tableH(JSON.parse(dataEl.textContent));
+    else {
+      const A0 = Math.pow(10, parseFloat(el.dataset.a0db) / 20);
+      const p1 = parseFloat(el.dataset.p1), p2 = parseFloat(el.dataset.p2);
+      const p3 = el.dataset.p3 ? parseFloat(el.dataset.p3) : Infinity;
+      const z = el.dataset.z ? parseFloat(el.dataset.z) : Infinity;      // RHP zero; Infinity = cancelled
+      H = (f) => {
+        const w1 = f / p1, w2 = f / p2, w3 = f / p3, wz = f / z;
+        const m = A0 * Math.sqrt(1 + wz * wz) / (Math.sqrt(1 + w1 * w1) * Math.sqrt(1 + w2 * w2) * Math.sqrt(1 + w3 * w3));
+        const d = -Math.atan(wz) - Math.atan(w1) - Math.atan(w2) - Math.atan(w3);
+        return { db: 20 * Math.log10(m), deg: d * 180 / Math.PI };
+      };
+    }
+    const plot = makeBode(el, H);
+    if (el.dataset.src) {                       // the LTspice export in data/ replaces the inline copy
+      loadLT(el.dataset.src)
+        .then((runs) => { if (runs.length) plot.update(tableH(runs[0].rows)); })
+        .catch(() => {});                       // keep the inline curve (e.g. page opened from disk)
+    }
+  });
 
   /* ---------------- Optional figures ---------------- */
   document.querySelectorAll("figure.optional img").forEach((img) => {
     const hide = () => { img.closest("figure").hidden = true; };
     if (img.complete && img.naturalWidth === 0) hide();
     img.addEventListener("error", hide);
+  });
+
+  /* ---------------- Optional report links ----------------
+     A link marked .report-link stays hidden until its PDF exists in the repo. */
+  document.querySelectorAll("a.report-link[hidden]").forEach((a) => {
+    fetch(a.getAttribute("href"), { method: "HEAD" })
+      .then((r) => { if (r.ok) a.hidden = false; })
+      .catch(() => {});
   });
 
   /* ---------------- Lightbox ----------------
