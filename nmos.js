@@ -167,7 +167,16 @@
   const KN = 0.8;      // density scale: about 0.25 electrons/px at the default bias
   let parts = [], acc = 0, symPhase = 0;
 
+  // Electrons are kept as a population that depends only on the present bias:
+  //  - the n+ source and drain always hold some (they are full of free electrons);
+  //  - the channel holds a number set by its charge, Q ~ V_OV * q(x), whether or not current flows;
+  //  - all of them jiggle (thermal motion); they only drift toward the drain when I_D > 0.
+  const IFLOW = 1e-9;                                       // below this, treat the drift as zero
+  const ZONE_SRC = [90, CX0 - 4], ZONE_DRN = [CX1 + 6, DRN.c - 4];
+  const MIN_SRC = 16, MIN_DRN = 10;
+
   function speedAt(x, m, ch, vsrc) {
+    if (!ch || m.id < IFLOW) return 0;
     if (x < CX0) return vsrc;
     if (x < ch.xp) return Math.min(vsrc / Math.max(ch.q(x), 0.12), 600);
     if (x < CX1) return 520;                                 // across the pinch-off gap
@@ -176,6 +185,7 @@
   function yAt(p, ch) {
     const deep = Y0 + 6 + p.r * 30;
     const lerp = (a, b, t) => a + (b - a) * t;
+    if (!ch) return deep;                                    // only the n+ electrons exist
     if (p.x < CX0) {
       const top = Y0 + 1 + p.r * Math.max(ch.th(CX0) - 2, 0.5);
       return p.x < CX0 - 30 ? deep : lerp(deep, top, (p.x - (CX0 - 30)) / 30);
@@ -185,19 +195,58 @@
     return lerp(Y0 + 1 + p.r * 2.5, deep, Math.min(1, (p.x - CX1) / 30));
   }
 
+  const inZone = (p, z) => p.x >= z[0] && p.x < z[1];
+  function fillZone(z, min) {
+    let n = 0;
+    for (const p of parts) if (inZone(p, z)) n++;
+    for (; n < min; n++) parts.push({ x: z[0] + Math.random() * (z[1] - z[0]), r: Math.random() });
+  }
+  function channelTarget(m, ch) {
+    let sum = 0;
+    for (let x = CX0; x < ch.xp; x += 2) sum += ch.q(x) * 2;
+    return Math.round(KN * Math.max(m.vov, 0) * sum);
+  }
+
   function step(dt) {
     const m = model(state.vgs, state.vds);
     const ch = channel(m);
-    if (!ch) { parts.length = 0; acc = 0; return; }
-    const vsrc = (KV * m.id) / Math.max(m.vov, 0.02);
-    acc += KN * KV * m.id * dt;
-    while (acc >= 1) {
-      acc -= 1;
-      if (parts.length < 420) parts.push({ x: 96 + Math.random() * 30, r: Math.random() });
+    const flowing = !!ch && m.id >= IFLOW;
+    const vsrc = flowing ? (KV * m.id) / Math.max(m.vov, 0.02) : 0;
+
+    // inflow from the source carries the current
+    if (flowing) {
+      acc += KN * KV * m.id * dt;
+      while (acc >= 1) { acc -= 1; if (parts.length < 460) parts.push({ x: 96 + Math.random() * 30, r: Math.random() }); }
+    } else acc = 0;
+
+    // drift plus thermal jiggle
+    const jig = 26 * Math.sqrt(dt * 60);
+    for (const p of parts) {
+      p.x += speedAt(p.x, m, ch, vsrc) * dt + (Math.random() - 0.5) * jig * dt * 3;
+      p.r = Math.min(1, Math.max(0, p.r + (Math.random() - 0.5) * 0.08));
+      if (p.x < 90) p.x = 90 + Math.random() * 4;
+      if (!flowing && p.x > DRN.c - 2) p.x = DRN.c - 2 - Math.random() * 4;
     }
-    for (const p of parts) p.x += speedAt(p.x, m, ch, vsrc) * dt;
-    parts = parts.filter((p) => p.x < DRN.c);
-    symPhase += (20 + 3e5 * m.id) * dt;
+    parts = parts.filter((p) => p.x < DRN.c && (ch || !(p.x >= CX0 - 2 && p.x < CX1 + 6)));  // channel collapses without inversion
+
+    // keep the populations consistent with the bias, whatever the history
+    fillZone(ZONE_SRC, MIN_SRC);
+    fillZone(ZONE_DRN, MIN_DRN);
+    if (ch) {
+      const zone = [CX0, ch.xp];
+      const target = channelTarget(m, ch);
+      const inCh = parts.filter((p) => inZone(p, zone));
+      let n = inCh.length;
+      for (let tries = 0; n < target && tries < target * 4; tries++) {      // add, weighted by local charge
+        const x = CX0 + Math.random() * (ch.xp - CX0);
+        if (Math.random() < ch.q(x)) { parts.push({ x, r: Math.random() }); n++; }
+      }
+      if (n > target + 2) {                                                  // remove a few per frame
+        const drop = new Set(inCh.slice(0, Math.min(n - target, 4)));
+        parts = parts.filter((p) => !drop.has(p));
+      }
+    }
+    symPhase += (m.id >= 1e-7 ? 15 + 3e5 * m.id : 0) * dt;
   }
   function settle(seconds) { for (let i = 0; i < seconds * 60; i++) step(1 / 60); }
 
@@ -316,14 +365,13 @@
 
     // electrons, with phosphor afterglow from the frame fade
     noGlow();
-    if (ch) {
-      for (const p of parts) {
-        const y = yAt(p, ch);
-        ctx.fillStyle = "rgba(156,255,180,0.22)"; ctx.beginPath(); ctx.arc(p.x, y, 3.6, 0, 6.2832); ctx.fill();
-        ctx.fillStyle = C.ph; ctx.beginPath(); ctx.arc(p.x, y, 1.6, 0, 6.2832); ctx.fill();
-      }
-      text("e⁻ →", 42, Y0 + 106, C.ph, "left", 13);
+    for (const p of parts) {
+      const y = yAt(p, ch);
+      ctx.fillStyle = "rgba(156,255,180,0.22)"; ctx.beginPath(); ctx.arc(p.x, y, 3.6, 0, 6.2832); ctx.fill();
+      ctx.fillStyle = C.ph; ctx.beginPath(); ctx.arc(p.x, y, 1.6, 0, 6.2832); ctx.fill();
     }
+    if (ch && m.id >= IFLOW) text("e⁻ →", 42, Y0 + 106, C.ph, "left", 13);
+    else if (ch) text("V_DS = 0: channel formed, no drift", 42, Y0 + 106, C.label, "left", 12);
     ctx.restore();
   }
 
@@ -351,7 +399,7 @@
     }
 
     // conventional current I_D, drain to source
-    if (on) {
+    if (on && m.id >= 1e-7) {
       ctx.strokeStyle = C.amber; ctx.fillStyle = C.amber; ctx.lineWidth = 1.5;
       line(232, 62, 232, 104);
       ctx.beginPath(); ctx.moveTo(232, 110); ctx.lineTo(227, 100); ctx.lineTo(237, 100); ctx.closePath(); ctx.fill();
