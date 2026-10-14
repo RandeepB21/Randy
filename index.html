@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
   <header class="site-header">
@@ -35,7 +35,7 @@
           <p class="small muted" style="margin-top:1.2em"><a href="projects.html">See the work</a> or <a href="resume.pdf" target="_blank" rel="noopener">download my résumé</a>.</p>
         </div>
 
-        <figure class="instrument" data-nmos>
+        <figure class="instrument" data-nmos data-iv="data/nmos_iv.txt">
           <div class="inst-bezel">
             <div class="screen inst-screen">
               <canvas role="img" aria-label="NMOS transistor shown as a silicon cross-section and as a circuit symbol. Electrons flow from source to drain through the inversion channel; the drain current flows from drain to source."></canvas>
@@ -57,17 +57,18 @@
             </div>
             <div class="presets" role="group" aria-label="Operating region presets">
               <span class="ctl-label">Region</span>
-              <button type="button" data-region="cut-off" data-vgs="0.50" data-vds="1.50">Cut-off</button>
+              <button type="button" data-region="subthreshold" data-vgs="0.55" data-vds="1.50">Subthreshold</button>
               <button type="button" data-region="triode" data-vgs="1.30" data-vds="0.25">Triode</button>
               <button type="button" data-region="saturation" data-vgs="1.00" data-vds="1.50">Saturation</button>
             </div>
           </div>
-          <figcaption><b>Turn the knobs.</b> An NMOS with W/L = 5.04/0.56 &micro;m, the input device of my folded cascode, using a square-law model with
-            V<sub>th</sub> = 0.69 V and &mu;<sub>n</sub>C<sub>ox</sub> = 167 &micro;A/V<sup>2</sup> from my GF180MCU sizing runs. Electrons (green)
-            speed up as the channel thins toward the drain; past V<sub>DS</sub> = V<sub>OV</sub> the channel pinches off and the current
-            (amber) barely changes.</figcaption>
+          <figcaption><b>Turn the knobs.</b> An NMOS with W/L = 5.04/0.56 &micro;m, the input device of my folded cascode. I<sub>D</sub> and
+            g<sub>m</sub> are read from an LTspice DC sweep of the GF180MCU BSIM model, and V<sub>th</sub> is extracted from the same sweep by
+            maximum-g<sub>m</sub> extrapolation. Regions use the textbook boundaries (V<sub>GS</sub> = V<sub>th</sub>,
+            V<sub>DS</sub> = V<sub>GS</sub> &minus; V<sub>th</sub>), so near an edge they are approximate. Electrons (green) speed up as the
+            channel thins toward the drain; past pinch-off the current (amber) barely changes.</figcaption>
         </figure>
-        <script src="nmos.js?v=8"></script>
+        <script src="nmos.js?v=9"></script>
       </div>
     </section>
 
@@ -132,12 +133,12 @@
       <span class="foot-left"><span>&copy; 2026 Randy</span>
         <span class="cal-sticker" title="Date this site was last updated"><b>Calibrated</b> <time datetime="2026-10-13">13 Oct 2026</time></span></span>
       <nav aria-label="Elsewhere">
-        <a href="mailto:r4bedi@uwaterloo.com">Email</a>
+        <a href="mailto:4bedi@uwaterloo.ca">Email</a>
         <a href="https://www.linkedin.com/in/randeep-bedi/" rel="noopener">LinkedIn</a>
         <a href="http://github.com/randeepb21" rel="noopener">GitHub</a>
       </nav>
     </div>
   </footer>
-  <script src="site.js?v=8"></script>
+  <script src="site.js?v=9"></script>
 </body>
 </html>
