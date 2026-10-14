@@ -21,32 +21,99 @@
   const readout = el.querySelector(".nmos-readout");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ---------------- device model ---------------- */
+  /* ---------------- device model ----------------
+     If data/nmos_iv.txt (an LTspice .dc sweep of Id(M1) over VDS and VGS, GF180 BSIM)
+     is present, I_D and g_m come from it and V_th is extracted from it. Otherwise the
+     square-law model below is used. Regions: subthreshold if V_GS < V_th, triode if
+     V_DS < V_GS - V_th, otherwise saturation. */
   const M = { VTH: 0.69, KP: 166.6e-6, W: 5.04, L: 0.56, LAM: 0.035 };
   const K = (M.KP * M.W) / M.L;
   const state = { vgs: 1.0, vds: 1.5 };
+  let IV = null;                                  // { vgs: [...], c: [{ v: [...], i: [...] }], vth }
 
-  function model(vgs, vds) {
+  function squareLaw(vgs, vds) {
     const vov = vgs - M.VTH;
-    let id, gm, region;
     if (vov <= 0) {
-      id = 1e-7 * Math.exp(vov / 0.045) * (1 - Math.exp(-vds / 0.026));
-      gm = id / (1.5 * 0.026);
-      region = "cut-off";
-    } else if (vds < vov) {
-      id = K * (vov * vds - (vds * vds) / 2) * (1 + M.LAM * vds);
-      gm = K * vds * (1 + M.LAM * vds);
-      region = "triode";
-    } else {
-      id = 0.5 * K * vov * vov * (1 + M.LAM * vds);
-      gm = K * vov * (1 + M.LAM * vds);
-      region = "saturation";
+      const id = 1e-7 * Math.exp(vov / 0.045) * (1 - Math.exp(-vds / 0.026));
+      return { id, gm: id / (1.5 * 0.026) };
     }
-    return { vov, id, gm, region };
+    if (vds < vov) return { id: K * (vov * vds - (vds * vds) / 2) * (1 + M.LAM * vds), gm: K * vds * (1 + M.LAM * vds) };
+    return { id: 0.5 * K * vov * vov * (1 + M.LAM * vds), gm: K * vov * (1 + M.LAM * vds) };
   }
 
-  const fmtI = (i) => (i < 1e-7 ? "< 0.1 µA" : i < 1e-3 ? (i * 1e6).toFixed(1) + " µA" : (i * 1e3).toFixed(2) + " mA");
-  const fmtG = (g) => (g < 1e-7 ? "≈ 0" : g < 1e-3 ? (g * 1e6).toFixed(0) + " µS" : (g * 1e3).toFixed(2) + " mS");
+  function curveAt(c, vds) {
+    const v = c.v, n = v.length;
+    if (vds <= v[0]) return c.i[0];
+    if (vds >= v[n - 1]) return c.i[n - 1];
+    let lo = 0, hi = n - 1;
+    while (hi - lo > 1) { const m = (lo + hi) >> 1; if (v[m] <= vds) lo = m; else hi = m; }
+    return c.i[lo] + ((vds - v[lo]) / (v[hi] - v[lo])) * (c.i[hi] - c.i[lo]);
+  }
+  function idData(vgs, vds) {
+    const G = IV.vgs, n = G.length;
+    if (vgs <= G[0]) return curveAt(IV.c[0], vds);
+    if (vgs >= G[n - 1]) return curveAt(IV.c[n - 1], vds);
+    let j = 0;
+    while (G[j + 1] < vgs) j++;
+    const t = (vgs - G[j]) / (G[j + 1] - G[j]);
+    const a = curveAt(IV.c[j], vds), b = curveAt(IV.c[j + 1], vds);
+    // below threshold the current is exponential in V_GS, so interpolate it geometrically
+    if (a > 0 && b > 0 && Math.max(a, b) < 1e-6) return a * Math.pow(b / a, t);
+    return a + (b - a) * t;
+  }
+
+  function model(vgs, vds) {
+    const vth = IV ? IV.vth : M.VTH;
+    const vov = vgs - vth;
+    let id, gm;
+    if (IV) {
+      id = Math.max(idData(vgs, vds), 0);
+      gm = Math.max((idData(vgs + 0.005, vds) - idData(vgs - 0.005, vds)) / 0.01, 0);
+    } else ({ id, gm } = squareLaw(vgs, vds));
+    const region = vov <= 0 ? "subthreshold" : vds < vov ? "triode" : "saturation";
+    return { vov, id, gm, region, vth };
+  }
+
+  /* LTspice "Export data as text" of a stepped .dc sweep: columns VDS and Id(M1),
+     one "Step Information: VGS=..." block per gate voltage. */
+  const SPICE = { f: 1e-15, p: 1e-12, n: 1e-9, u: 1e-6, "µ": 1e-6, m: 1e-3, k: 1e3, meg: 1e6 };
+  function spiceNum(s) {
+    const m = /^([-+]?[\d.]+(?:e[-+]?\d+)?)(meg|[fpnuµmk])?/i.exec(String(s).trim());
+    return m ? parseFloat(m[1]) * (m[2] ? SPICE[m[2].toLowerCase()] : 1) : NaN;
+  }
+  function parseIV(text) {
+    const curves = []; let cur = null;
+    for (const line of text.split(/\r?\n/)) {
+      const st = /^Step Information:.*?VGS=(\S+)/i.exec(line);
+      if (st) { cur = { vgs: spiceNum(st[1]), v: [], i: [] }; curves.push(cur); continue; }
+      const m = /^\s*([-+\d.eE]+)\s+([-+\d.eE]+)\s*$/.exec(line);
+      if (m && cur) { cur.v.push(parseFloat(m[1])); cur.i.push(parseFloat(m[2])); }
+    }
+    const good = curves.filter((c) => c.v.length > 2 && isFinite(c.vgs)).sort((x, y) => x.vgs - y.vgs);
+    if (good.length < 4) return null;
+    const iv = { vgs: good.map((c) => c.vgs), c: good };
+    // V_th by maximum-g_m linear extrapolation at V_DS = 50 mV
+    const vd = 0.05, ids = good.map((c) => curveAt(c, vd));
+    let best = 1, gmax = -1;
+    for (let k = 1; k < good.length - 1; k++) {
+      const g = (ids[k + 1] - ids[k - 1]) / (iv.vgs[k + 1] - iv.vgs[k - 1]);
+      if (g > gmax) { gmax = g; best = k; }
+    }
+    iv.vth = iv.vgs[best] - ids[best] / gmax - vd / 2;
+    return iv;
+  }
+  async function loadIV(url) {
+    const res = await fetch(url, { cache: "no-cache" });
+    if (!res.ok) throw new Error(res.status);
+    const buf = new Uint8Array(await res.arrayBuffer());
+    const utf16 = (buf[0] === 0xff && buf[1] === 0xfe) || (buf.length > 3 && buf[1] === 0 && buf[3] === 0);
+    return parseIV(new TextDecoder(utf16 ? "utf-16le" : "utf-8").decode(buf));
+  }
+
+  const fmtI = (i) => (i < 1e-9 ? (i * 1e12).toFixed(1) + " pA" : i < 1e-6 ? (i * 1e9).toFixed(1) + " nA"
+    : i < 1e-3 ? (i * 1e6).toFixed(1) + " µA" : (i * 1e3).toFixed(2) + " mA");
+  const fmtG = (g) => (g < 1e-9 ? "≈ 0" : g < 1e-6 ? (g * 1e9).toFixed(1) + " nS" : g < 1e-5 ? (g * 1e6).toFixed(2) + " µS"
+    : g < 1e-3 ? (g * 1e6).toFixed(0) + " µS" : (g * 1e3).toFixed(2) + " mS");
 
   /* ---------------- colours (the CRT is the same in both themes) ---------------- */
   const C = {
@@ -241,7 +308,7 @@
         text("inversion channel", (CX0 + CX1) / 2, Y0 + 82, C.label, "center", 12);
       }
     } else {
-      text("no channel: V_GS < V_th", (CX0 + CX1) / 2, Y0 + 82, C.amber, "center", 12);
+      text("subthreshold: V_GS < V_th, no channel", (CX0 + CX1) / 2, Y0 + 82, C.amber, "center", 12);
     }
 
     // electrons, with phosphor afterglow from the frame fade
@@ -324,7 +391,8 @@
       `<span>V<sub>DS</sub> <b>${state.vds.toFixed(2)} V</b></span>` +
       `<span>I<sub>D</sub> <b>${fmtI(m.id)}</b></span>` +
       `<span>g<sub>m</sub> <b>${fmtG(m.gm)}</b></span>` +
-      `<span class="region">Region <b>${m.region}</b></span>`;
+      `<span class="region">Region <b>${m.region}</b></span>` +
+      `<span class="src">V<sub>th</sub> <b>${m.vth.toFixed(3)} V</b> ${IV ? "from LTspice sweep" : "<i>square-law model</i>"}</span>`;
     presetBtns.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.region === m.region)));
     for (const key in knobs) knobs[key].describe(m);
     if (reduce) { parts = []; acc = 0; settle(6); draw(true); }
@@ -405,4 +473,11 @@
   let rt = 0;
   window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { layout(); draw(true); }, 120); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw(true));
+
+  // Swap in the BSIM sweep once it loads.
+  if (el.dataset.iv) loadIV(el.dataset.iv).then((iv) => {
+    if (!iv) return;
+    IV = iv; parts = []; acc = 0;
+    update(); if (!reduce) settle(2); draw(true);
+  }).catch(() => {});
 })();
