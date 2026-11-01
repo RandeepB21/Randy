@@ -410,3 +410,9 @@ a.report-link[hidden] { display: none; }
   .rv-pages { height: 58vh; padding: 8px; }
   .rv-tools { margin-left: 0; }
 }
+
+/* ---------- References ---------- */
+.refs { padding-left: 1.6em; font-size: 0.92rem; color: var(--ink-2); max-width: var(--measure); }
+.refs li + li { margin-top: 0.5em; }
+.refs li:target { color: var(--ink); background: color-mix(in srgb, var(--silk) 12%, transparent); border-radius: 3px; }
+a.cite { text-decoration: none; font-size: 0.85em; white-space: nowrap; }
