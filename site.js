@@ -81,7 +81,12 @@
     let st = {};
     function analyze() {
       const a0 = H(fmin).db;
-      let fu = null, pm = null, f180 = null, gm = null;
+      let fu = null, pm = null, f180 = null, gm = null, f3 = null;
+      if (H(fmax).db < a0 - 3) {                // -3 dB bandwidth: gain 3 dB below its low-frequency value
+        let lo = fmin, hi = fmax;
+        for (let i = 0; i < 80; i++) { const m = Math.sqrt(lo * hi); if (H(m).db > a0 - 3) lo = m; else hi = m; }
+        f3 = Math.sqrt(lo * hi);
+      }
       if (a0 > 0 && H(fmax).db < 0) {
         let lo = fmin, hi = fmax;
         for (let i = 0; i < 80; i++) { const m = Math.sqrt(lo * hi); if (H(m).db > 0) lo = m; else hi = m; }
@@ -98,14 +103,15 @@
         }
         prev = f;
       }
-      st = { a0, fu, pm, f180, gm };
+      st = { a0, fu, pm, f180, gm, f3 };
     }
 
     const fmtDeg = (d) => minus(d.toFixed(1)) + "°";
     function readoutIdle() {
       if (!ro) return;
-      const { fu, pm, gm } = st;
+      const { fu, pm, gm, f3 } = st;
       ro.innerHTML =
+        (f3 ? `<span>&minus;3 dB <b>${fmtFreq(f3)}</b></span>` : "") +
         (fu ? `<span>Unity gain <b>${fmtFreq(fu)}</b></span>` : "") +
         (fu ? `<span class="k-phase">Phase <b>${fmtDeg(H(fu).deg)}</b></span>` : "") +
         (pm !== null ? `<span>Phase margin <b${pm < 0 ? ' class="warn"' : ""}>${fmtDeg(pm)}</b></span>` : "") +
