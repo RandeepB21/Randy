@@ -49,7 +49,7 @@
         </figure>
 
         <figure class="figure optional">
-          <img src="images/fc-schematic.png" alt="Schematic of the folded cascode op-amp with narrow-diode bias circuit and NMOS clamps M12 and M13">
+          <img src="images/folded-cascode/image9.jpg" alt="Schematic of the folded cascode op-amp with narrow-diode bias circuit and NMOS clamps M12 and M13">
           <figcaption><b>Schematic.</b> NMOS input pair M1/M2 with tail M11, PMOS folding sources M9/M10, PMOS cascodes M3/M4,
             NMOS cascode mirror M5&ndash;M8, clamps M12/M13, and the narrow-diode bias circuit MB1&ndash;MB6.</figcaption>
         </figure>
@@ -60,10 +60,10 @@
             <thead><tr><th>Parameter</th><th>Specification</th><th>Hand analysis</th><th>Simulated</th></tr></thead>
             <tbody>
               <tr><td>Open-loop DC gain</td><td>&ge; 60.2 dB</td><td class="num">77.5 dB</td><td class="num">79.1 dB</td></tr>
-              <tr><td>Unity-gain frequency, f<sub>t</sub></td><td>&ge; 19.9 MHz</td><td class="num">&mdash;</td><td class="num">38.0 MHz</td></tr>
-              <tr><td>&minus;3 dB bandwidth</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">4.25 kHz</td></tr>
+              <tr><td>Unity-gain frequency, f<sub>t</sub></td><td>&ge; 19.9 MHz</td><td class="num">&mdash;</td><td class="num">37.9 MHz</td></tr>
+              <tr><td>&minus;3 dB bandwidth</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">4.24 kHz</td></tr>
               <tr><td>Phase margin</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">82.2&deg;</td></tr>
-              <tr><td>Gain margin</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">36.3 dB</td></tr>
+              <tr><td>Gain margin</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">36.2 dB</td></tr>
               <tr><td>Settling to 2<sup>&minus;9</sup> at &beta; = 0.5, 1 V step (rise / fall)</td><td>&le; 100 ns</td><td class="num">&mdash;</td><td class="num">73.5 / 70.5 ns</td></tr>
               <tr><td>Slew rate, unity-gain buffer (rise / fall)</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">44.4 / 46.4 V/&micro;s</td></tr>
               <tr><td>Output swing</td><td>&mdash;</td><td class="num">1.16 to 2.73 V</td><td class="num">&mdash;</td></tr>
@@ -121,7 +121,7 @@
         </div>
 
         <figure class="figure optional">
-          <img src="images/fc-slew-5pf.png" alt="Rising-edge step response at 5 pF with and without clamps, showing output, V_DS1, input-pair currents and clamp current">
+          <img src="images/folded-cascode/rising_5pf.png" alt="Rising-edge step response at 5 pF with and without clamps, showing output, V_DS1, input-pair currents and clamp current">
           <figcaption><b>Rising edge at 5 pF, with and without clamps.</b> Without clamps V<sub>DS1</sub> falls to 96 mV and M1 enters triode;
             with clamps it stays above 0.44 V.</figcaption>
         </figure>
@@ -153,13 +153,13 @@
         </div>
 
         <figure class="figure optional">
-          <img src="images/fc-beta-step.png" alt="Closed-loop step response at beta 0.5 with the settling error band">
+          <img src="images/folded-cascode/fc_beta_step.png" alt="Closed-loop step response at beta 0.5 with the settling error band">
           <figcaption><b>Closed-loop step at &beta; = 0.5.</b> Output against the ideal output, and the error as it enters the 2<sup>&minus;9</sup> band.</figcaption>
         </figure>
 
         <figure class="figure optional">
-          <img src="images/fc-cmrr.png" alt="Differential gain, common-mode gain and CMRR versus frequency">
-          <figcaption><b>CMRR.</b> 73.2 dB at low frequency, flat to 1 MHz and rolling off from about 10 MHz. Simulated with matched devices,
+          <img src="images/folded-cascode/fc_cmrr.png" alt="Differential gain, common-mode gain and CMRR versus frequency">
+          <figcaption><b>CMRR.</b> 73.2 dB at low frequency, rolling off from about 10 MHz with its &minus;3 dB point near 16 MHz. Simulated with matched devices,
             so mismatch would lower it.</figcaption>
         </figure>
 
@@ -181,13 +181,13 @@
               <tr><td>DC gain</td><td>&ge; 60.2 dB</td><td class="num">76.1 dB</td><td>SF, 125&nbsp;&deg;C</td></tr>
               <tr><td>Unity-gain frequency</td><td>&ge; 19.9 MHz</td><td class="num">28.5 MHz</td><td>SS and SF, 125&nbsp;&deg;C</td></tr>
               <tr><td>Phase margin</td><td>&mdash;</td><td class="num">81.1&deg;</td><td>FS, &minus;40&nbsp;&deg;C</td></tr>
-              <tr><td>Gain margin</td><td>&mdash;</td><td class="num">33.8 dB</td><td>FS, &minus;40&nbsp;&deg;C</td></tr>
+              <tr><td>Gain margin</td><td>&mdash;</td><td class="num">33.7 dB</td><td>FS, &minus;40&nbsp;&deg;C</td></tr>
             </tbody>
           </table>
         </div>
 
         <figure class="figure optional">
-          <img src="images/fc-corners.png" alt="DC gain, unity-gain frequency, phase margin and gain margin across process corners and temperature">
+          <img src="images/folded-cascode/corners_vs_temp.png" alt="DC gain, unity-gain frequency, phase margin and gain margin across process corners and temperature">
           <figcaption><b>Performance across corners and temperature.</b> f<sub>t</sub> is set by the NMOS input pair, so SS and SF overlap, as do FF and FS.</figcaption>
         </figure>
 
@@ -223,7 +223,7 @@
         </div>
 
         <figure class="figure optional">
-          <img src="images/fc-mc.png" alt="Monte Carlo histograms of offset, gain, unity-gain frequency, phase margin and gain margin">
+          <img src="images/folded-cascode/fc_11_mc.png" alt="Monte Carlo histograms of offset, gain, unity-gain frequency, phase margin and gain margin">
           <figcaption><b>Monte Carlo histograms, global + mismatch.</b> Lines mark the mean and &plusmn;3&sigma;; note the phase margin's low tail.</figcaption>
         </figure>
 
@@ -251,7 +251,7 @@
   <footer class="site-footer">
     <div class="wrap">
       <span class="foot-left"><span>&copy; 2026 Randy</span>
-        <span class="cal-sticker" title="Date this site was last updated"><b>Calibrated</b> <time datetime="2026-10-31">31 Oct 2026</time></span></span>
+        <span class="cal-sticker" title="Date this site was last updated"><b>Calibrated</b> <time datetime="2026-11-01">1 Nov 2026</time></span></span>
       <nav aria-label="Elsewhere">
         <a href="mailto:you@example.com">Email</a>
         <a href="https://www.linkedin.com/in/your-handle" rel="noopener">LinkedIn</a>
