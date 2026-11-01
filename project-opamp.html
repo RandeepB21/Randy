@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Two-stage op-amp | Randy</title>
-  <meta name="description" content="Two-stage Miller-compensated CMOS op-amp on GF180MCU: 81.7 dB gain, 35 MHz unity-gain frequency, 65 degree phase margin, triode-transistor compensation verified across PVT corners.">
+  <meta name="description" content="Two-stage Miller-compensated CMOS op-amp on GF180MCU: 81.7 dB gain, 35 MHz unity-gain frequency, 65 degree phase margin, triode-transistor nulling resistor compared with a PDK poly resistor across PVT corners and Monte Carlo.">
   <meta name="color-scheme" content="light dark">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,9 +31,10 @@
         <p class="crumb"><a href="projects.html">Work</a></p>
         <h1>Two-stage Miller-compensated op-amp</h1>
         <p class="lede">A PMOS-input two-stage op-amp, compensated twice over: once for small-signal stability, then again when a large step
-          showed the second stage cutting off. The nulling resistor is built two ways, as an ideal resistor and as a transistor in triode,
-          and the transistor version holds its phase margin far better across process and temperature.</p>
-        <div class="meta"><span><b>Process</b> GF180MCU open PDK, 3.3 V</span><span><b>Tools</b> LTspice</span><span><b>Load</b> 1 pF</span><span><b>Reference</b> Sedra/Smith, Razavi</span><a class="report-link" href="reports/two-stage-opamp.pdf" target="_blank" rel="noopener" hidden><b>Full report (PDF)</b></a></div>
+          showed the second stage cutting off. The nulling resistor is built two ways, as a poly resistor and as a transistor in triode.
+          The transistor holds its phase margin far better over temperature, but Monte Carlo showed it varying more from chip to chip,
+          until its bias devices were moved into the same model bin as the devices they track.</p>
+        <div class="meta"><span><b>Process</b> GF180MCU open PDK, 3.3 V</span><span><b>Tools</b> LTspice, ngspice</span><span><b>Load</b> 1 pF</span><span><b>Reference</b> Sedra/Smith, Razavi</span><a class="report-link" href="reports/two-stage-opamp.pdf" target="_blank" rel="noopener" hidden><b>Full report (PDF)</b></a></div>
       </div>
     </section>
 
@@ -91,6 +92,7 @@
               <tr><td>Slew rate (rise / fall)</td><td class="num">47.5 / 54.8 V/&micro;s</td><td class="num">46.5 / 54.4 V/&micro;s</td></tr>
               <tr><td>Large-step overshoot</td><td class="num">3.44%</td><td class="num">5.05%</td></tr>
               <tr><td>Rise / fall time, 10&ndash;90%</td><td class="num">16.8 / 14.6 ns</td><td class="num">17.2 / 14.7 ns</td></tr>
+              <tr><td>CMRR at low frequency (matched devices)</td><td class="num">&mdash;</td><td class="num">83.1 dB</td></tr>
               <tr><td>Power</td><td class="num">0.400 mW</td><td class="num">0.427 mW</td></tr>
             </tbody>
           </table>
@@ -105,8 +107,11 @@
               M6 is sized from the systematic-offset condition (W/L)<sub>6</sub>/(W/L)<sub>4</sub> = 2(W/L)<sub>7</sub>/(W/L)<sub>5</sub>.
               By hand, each stage gives about 102 and 120 V/V, for 81.8 dB overall, which matches simulation.</p>
             <h3>Why it needs compensation</h3>
-            <p>Without compensation both poles sit below the 201 MHz unity-gain frequency, each contributing nearly 90&deg;, and the
-              phase margin is &minus;8.2&deg;: unstable as a unity-gain buffer. Miller capacitance C<sub>C</sub> splits the poles, but adds a
+            <p>Without compensation the two main poles sit close together, at about 700 kHz (first-stage output) and 850 kHz (output),
+              far below the 201 MHz unity-gain frequency. The first-stage node is heavier than it looks: M6's gate&ndash;drain capacitance
+              is Miller-multiplied by the second-stage gain, which takes C<sub>1</sub> from about 7 fF to 193 fF. Two poles alone would leave
+              about 0&deg; of margin; simulation gives &minus;8.2&deg;, so higher-frequency poles such as the mirror node add the rest.
+              Either way it is unstable as a unity-gain buffer. Miller capacitance C<sub>C</sub> splits the poles, but adds a
               right-half-plane zero at g<sub>m6</sub>/C<sub>C</sub>. A resistor of 1/g<sub>m6</sub> = 1479 &Omega; in series with C<sub>C</sub>
               pushes that zero to infinity, leaving PM = 90&deg; &minus; tan<sup>&minus;1</sup>(f<sub>t</sub>/f<sub>p2</sub>). Targeting 60&deg; gives
               C<sub>C</sub> = 233.8 fF, and simulation returns 56.9&deg;.</p>
@@ -145,26 +150,75 @@
         <div class="split">
           <h2>Across process and temperature</h2>
           <div class="prose">
-            <p>I swept TT, SS, FF, SF and FS at &minus;40, 27, 85 and 125&nbsp;&deg;C, plus &plusmn;20% on the fixed resistor. The triode
-              transistor keeps the phase margin within 0.7&deg; at any one corner against up to 6.5&deg; for the resistor, and its worst case
-              is 63.0&deg; against 60.7&deg;. The skewed corners cause most of what variation remains, because the PMOS input pair and the NMOS
-              output device move in opposite directions.</p>
+            <p>I ran TT, SS, FF, SF and FS at &minus;40, 27, 85 and 125&nbsp;&deg;C in ngspice. For a fair comparison, the resistor design
+              uses the PDK's own poly resistor (ppolyf_u_1k) with its &plusmn;20% sheet-resistance corners and temperature coefficient, not an
+              ideal resistor.</p>
+            <p>The two elements drift in opposite directions. The poly resistance falls with temperature while g<sub>m6</sub> also falls, so
+              k = R<sub>Z</sub>g<sub>m6</sub> drops from about 1.3 to 0.75 at TT. As k passes through 1 the zero moves from the left half-plane,
+              through infinity, into the right half-plane, and the phase margin falls about 5&deg;. M<sub>Z</sub>'s on-resistance depends on the
+              same electron mobility as g<sub>m6</sub>, so it rises as g<sub>m6</sub> falls: k stays above 1 (1.08 to 1.35) and the phase margin
+              moves less than 0.8&deg; over temperature at any corner. What spread remains is between the skewed corners, where the PMOS input
+              pair and the NMOS output device move in opposite directions and M<sub>Z</sub> tracks only the NMOS side.</p>
           </div>
         </div>
 
         <div class="table-scroll">
           <table class="spec">
-            <caption>Corner summary (5 corners, &minus;40 to 125&nbsp;&deg;C)</caption>
-            <thead><tr><th>Measurement</th><th>Resistor, &plusmn;20%</th><th>Triode transistor M<sub>Z</sub></th></tr></thead>
+            <caption>Corner summary (5 corners, &minus;40 to 125&nbsp;&deg;C, ngspice)</caption>
+            <thead><tr><th>Measurement</th><th>PDK poly resistor, res_ff to res_ss</th><th>Triode transistor M<sub>Z</sub></th></tr></thead>
             <tbody>
-              <tr><td>Phase margin spread within a corner</td><td class="num">6.0&ndash;6.5&deg;</td><td class="num">0.3&ndash;0.7&deg;</td></tr>
-              <tr><td>Phase margin, total spread</td><td class="num">10.5&deg;</td><td class="num">4.1&deg;</td></tr>
-              <tr><td>Worst-case phase margin</td><td class="num">60.7&deg;</td><td class="num">63.0&deg;</td></tr>
-              <tr><td>Gain margin range</td><td class="num">20.2 to 39.2 dB</td><td class="num">28.9 to 37.0 dB</td></tr>
-              <tr><td>Unity-gain frequency range</td><td class="num">28.3 to 44.1 MHz</td><td class="num">27.8 to 43.1 MHz</td></tr>
+              <tr><td>Phase margin spread within a corner</td><td class="num">7.2&ndash;7.6&deg;</td><td class="num">0.3&ndash;0.7&deg;</td></tr>
+              <tr><td>Phase margin, total spread</td><td class="num">10.0&deg;</td><td class="num">2.6&deg;</td></tr>
+              <tr><td>Phase margin range</td><td class="num">61.6 to 71.6&deg;</td><td class="num">64.2 to 66.8&deg;</td></tr>
+              <tr><td>Gain margin range</td><td class="num">20.3 to 39.5 dB</td><td class="num">29.7 to 37.2 dB</td></tr>
+              <tr><td>Unity-gain frequency range</td><td class="num">28.4 to 44.1 MHz</td><td class="num">27.8 to 43.0 MHz</td></tr>
             </tbody>
           </table>
         </div>
+
+        <figure class="figure optional">
+          <img src="images/opamp-pm-temp.png" alt="Phase margin versus temperature at five process corners, PDK poly resistor against triode transistor M_Z">
+          <figcaption><b>Phase margin over temperature.</b> With the poly resistor the phase margin falls about 5&deg; from &minus;40 to
+            125&nbsp;&deg;C at every corner; with M<sub>Z</sub> it moves less than 0.8&deg;.</figcaption>
+        </figure>
+
+        <div class="split">
+          <h2>Monte Carlo: the opposite result</h2>
+          <div class="prose">
+            <p>Corners move every NMOS together and every PMOS together, so they can't show mismatch. I ran 500-trial Monte Carlo in ngspice with
+              the PDK's statistical models, separating global process variation from device-to-device mismatch. The result reversed the corner
+              picture: from chip to chip, M<sub>Z</sub>'s phase margin varied three times as much as the poly resistor's (&sigma; = 1.81&deg;
+              against 0.58&deg;), with k ranging from 0.83 to 2.77.</p>
+            <p>A triode resistor is very sensitive to its overdrive: at V<sub>OV,Z</sub> &asymp; 0.2 V, each millivolt of error moves
+              R<sub>Z</sub> by 0.5%. The bias stack is meant to cancel shared threshold shifts, but its devices (1.3 and 5.5 &micro;m wide) fall in
+              a narrower model bin than M6 and M<sub>Z</sub> (over 10 &micro;m), and the PDK gives that bin its own, larger global threshold
+              variation. So a process shift moves the bias devices differently from the devices they track. Widening M<sub>A</sub>, M<sub>B</sub>
+              and M<sub>P</sub> by 8&times; puts them in the same bin: &sigma;<sub>k</sub> drops from 0.248 to 0.043 and the phase-margin
+              &sigma; to 0.57&deg;, matching the poly resistor, for 187 &micro;W of extra bias power. A global-only run confirms the cause:
+              there, &sigma;<sub>k</sub> falls from 0.238 to 0.006.</p>
+            <p>Input offset is the same for both designs, about 9 mV (1&sigma;), because neither nulling element carries DC current; it is set by
+              first-stage mismatch.</p>
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table class="spec">
+            <caption>Monte Carlo, global + mismatch, 500 trials each (TT, 27&nbsp;&deg;C, same seed)</caption>
+            <thead><tr><th>Measurement (&mu; &plusmn; &sigma;)</th><th>PDK poly resistor</th><th>M<sub>Z</sub>, original bias</th><th>M<sub>Z</sub>, 8&times; bias devices</th></tr></thead>
+            <tbody>
+              <tr><td>Phase margin</td><td class="num">66.17 &plusmn; 0.58&deg;</td><td class="num">65.72 &plusmn; 1.81&deg;</td><td class="num">65.70 &plusmn; 0.57&deg;</td></tr>
+              <tr><td>Phase margin range</td><td class="num">64.6 to 67.8&deg;</td><td class="num">62.1 to 75.2&deg;</td><td class="num">64.1 to 67.6&deg;</td></tr>
+              <tr><td>k = R<sub>Z</sub>g<sub>m6</sub></td><td class="num">0.998 &plusmn; 0.050</td><td class="num">1.250 &plusmn; 0.248</td><td class="num">1.265 &plusmn; 0.043</td></tr>
+              <tr><td>Input offset, &sigma;</td><td class="num">8.74 mV</td><td class="num">8.96 mV</td><td class="num">&mdash;</td></tr>
+              <tr><td>Power (mean)</td><td class="num">0.400 mW</td><td class="num">0.427 mW</td><td class="num">+0.187 mW</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <figure class="figure optional">
+          <img src="images/opamp-mc.png" alt="Monte Carlo histograms of k and phase margin for the original and 8x bias designs">
+          <figcaption><b>Monte Carlo histograms.</b> Moving the bias devices into M6's model bin collapses the spread in k and phase margin.</figcaption>
+        </figure>
 
         <div class="table-scroll">
           <table class="spec">
@@ -181,7 +235,7 @@
           </table>
         </div>
 
-        <p class="small muted">Still to come: CMRR, small-step response, and a side-by-side comparison with the folded cascode.</p>
+        <p class="small muted">Next: layout of the first stage (M1&ndash;M4) in Magic, with DRC, LVS and post-layout simulation.</p>
       </div>
     </section>
 
@@ -190,7 +244,7 @@
   <footer class="site-footer">
     <div class="wrap">
       <span class="foot-left"><span>&copy; 2026 Randy</span>
-        <span class="cal-sticker" title="Date this site was last updated"><b>Calibrated</b> <time datetime="2026-10-17">17 Oct 2026</time></span></span>
+        <span class="cal-sticker" title="Date this site was last updated"><b>Calibrated</b> <time datetime="2026-10-31">31 Oct 2026</time></span></span>
       <nav aria-label="Elsewhere">
         <a href="mailto:you@example.com">Email</a>
         <a href="https://www.linkedin.com/in/your-handle" rel="noopener">LinkedIn</a>
