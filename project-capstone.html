@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Folded cascode op-amp | Randy</title>
-  <meta name="description" content="Folded-cascode CMOS op-amp on GF180MCU: 79.1 dB gain, 38 MHz unity-gain frequency, 82 degree phase margin, settles to 9-bit accuracy in 74 ns at beta = 0.5, verified across PVT corners and Monte Carlo.">
+  <title>Capstone: smart plant watering | Randy</title>
+  <meta name="description" content="Capstone project: a smart plant watering system with a custom KiCad PCB, Fusion 360 enclosure and AI watering predictions.">
   <meta name="color-scheme" content="light dark">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
   <header class="site-header">
@@ -29,227 +29,58 @@
     <section class="hero project-head">
       <div class="wrap">
         <p class="crumb"><a href="projects.html">Work</a></p>
-        <h1>Folded cascode op-amp</h1>
-        <p class="lede">A single-stage folded cascode sized to settle a 1 V step to 9-bit accuracy in under 100 ns at a feedback factor of 0.5,
-          with NMOS clamps that keep the input pair out of triode while it slews. It settles in 74 ns and meets its gain and bandwidth specs at every
-          process corner from &minus;40 to 125&nbsp;&deg;C and in all 500 Monte Carlo trials.</p>
-        <div class="meta"><span><b>Process</b> GF180MCU open PDK, 3.3 V</span><span><b>Tools</b> LTspice, ngspice</span><span><b>Load</b> 1 pF</span><span><b>Reference</b> Sedra/Smith</span><a class="report-link" href="reports/folded-cascode.pdf" target="_blank" rel="noopener" hidden><b>Full report (PDF)</b></a></div>
+        <h1>Capstone: smart plant watering system</h1>
+        <p class="lede">A sensor node that waters a plant on its own, deciding when based on soil moisture, the environment and a prediction model in a companion app.</p>
+        <div class="meta"><span><b>My role</b> PCB, enclosure, watering detection</span><span><b>Tools</b> KiCad, Fusion 360</span><span><b>Year</b> 2025</span></div>
       </div>
     </section>
 
     <section>
       <div class="wrap stack">
-        <figure class="figure bode" data-a0db="79.1" data-fmin="1" data-phmin="-225" data-src="data/folded_cascode_ac.txt">
-          <script type="application/json" class="bode-data">[[1.0,77.393,-0.01],[1.122,77.393,-0.01],[1.259,77.393,-0.01],[1.413,77.393,-0.02],[1.585,77.393,-0.02],[1.778,77.393,-0.02],[1.995,77.393,-0.02],[2.239,77.393,-0.02],[2.512,77.393,-0.03],[2.818,77.393,-0.03],[3.162,77.393,-0.04],[3.548,77.393,-0.04],[3.981,77.393,-0.04],[4.467,77.393,-0.05],[5.012,77.393,-0.06],[5.623,77.393,-0.06],[6.31,77.393,-0.07],[7.079,77.393,-0.08],[7.943,77.393,-0.09],[8.913,77.393,-0.1],[10.0,77.393,-0.11],[11.22,77.393,-0.12],[12.59,77.393,-0.14],[14.13,77.393,-0.16],[15.85,77.393,-0.18],[17.78,77.393,-0.2],[19.95,77.393,-0.22],[22.39,77.393,-0.25],[25.12,77.393,-0.28],[28.18,77.393,-0.31],[31.62,77.393,-0.35],[35.48,77.393,-0.4],[39.81,77.393,-0.44],[44.67,77.393,-0.5],[50.12,77.392,-0.56],[56.23,77.392,-0.63],[63.1,77.392,-0.7],[70.79,77.392,-0.79],[79.43,77.392,-0.88],[89.13,77.392,-0.99],[100.0,77.391,-1.11],[112.2,77.391,-1.25],[125.9,77.39,-1.4],[141.3,77.39,-1.57],[158.5,77.389,-1.76],[177.8,77.388,-1.98],[199.5,77.386,-2.22],[223.9,77.385,-2.49],[251.2,77.383,-2.8],[281.8,77.38,-3.14],[316.2,77.376,-3.52],[354.8,77.372,-3.95],[398.1,77.367,-4.43],[446.7,77.36,-4.96],[501.2,77.352,-5.56],[562.3,77.341,-6.24],[631.0,77.328,-6.99],[707.9,77.311,-7.84],[794.3,77.291,-8.78],[891.3,77.264,-9.83],[1000.0,77.232,-11.0],[1122.0,77.191,-12.3],[1259.0,77.14,-13.75],[1413.0,77.077,-15.36],[1585.0,76.999,-17.12],[1778.0,76.903,-19.07],[1995.0,76.784,-21.2],[2239.0,76.64,-23.52],[2512.0,76.464,-26.03],[2818.0,76.253,-28.72],[3162.0,76.001,-31.58],[3548.0,75.703,-34.6],[3981.0,75.355,-37.74],[4467.0,74.952,-40.97],[5012.0,74.494,-44.26],[5623.0,73.978,-47.55],[6310.0,73.406,-50.81],[7079.0,72.778,-54.0],[7943.0,72.098,-57.07],[8913.0,71.37,-60.01],[10000.0,70.599,-62.78],[11220.0,69.79,-65.37],[12590.0,68.948,-67.78],[14130.0,68.078,-69.99],[15850.0,67.184,-72.02],[17780.0,66.27,-73.87],[19950.0,65.339,-75.55],[22390.0,64.395,-77.06],[25120.0,63.441,-78.43],[28180.0,62.477,-79.66],[31620.0,61.506,-80.77],[35480.0,60.529,-81.76],[39810.0,59.547,-82.65],[44670.0,58.562,-83.44],[50120.0,57.573,-84.15],[56230.0,56.583,-84.78],[63100.0,55.59,-85.35],[70790.0,54.596,-85.86],[79430.0,53.601,-86.31],[89130.0,52.604,-86.72],[100000.0,51.607,-87.08],[112200.0,50.61,-87.4],[125900.0,49.612,-87.69],[141300.0,48.613,-87.94],[158500.0,47.614,-88.17],[177800.0,46.615,-88.38],[199500.0,45.616,-88.56],[223900.0,44.617,-88.73],[251200.0,43.617,-88.88],[281800.0,42.617,-89.01],[316200.0,41.618,-89.13],[354800.0,40.618,-89.24],[398100.0,39.618,-89.34],[446700.0,38.618,-89.43],[501200.0,37.618,-89.51],[562300.0,36.619,-89.59],[631000.0,35.619,-89.66],[707900.0,34.619,-89.73],[794300.0,33.619,-89.79],[891300.0,32.619,-89.85],[1000000.0,31.619,-89.91],[1122000.0,30.619,-89.97],[1259000.0,29.619,-90.02],[1413000.0,28.619,-90.08],[1585000.0,27.619,-90.14],[1778000.0,26.619,-90.2],[1995000.0,25.619,-90.26],[2239000.0,24.619,-90.33],[2512000.0,23.619,-90.4],[2818000.0,22.619,-90.47],[3162000.0,21.619,-90.56],[3548000.0,20.618,-90.65],[3981000.0,19.618,-90.74],[4467000.0,18.618,-90.85],[5012000.0,17.618,-90.97],[5623000.0,16.618,-91.1],[6310000.0,15.618,-91.25],[7079000.0,14.617,-91.41],[7943000.0,13.617,-91.59],[8913000.0,12.616,-91.8],[10000000.0,11.615,-92.02],[11220000.0,10.615,-92.28],[12590000.0,9.613,-92.56],[14130000.0,8.612,-92.88],[15850000.0,7.61,-93.23],[17780000.0,6.608,-93.63],[19950000.0,5.605,-94.08],[22390000.0,4.602,-94.58],[25120000.0,3.597,-95.14],[28180000.0,2.591,-95.77],[31620000.0,1.584,-96.48],[35480000.0,0.575,-97.27],[39810000.0,-0.436,-98.15],[44670000.0,-1.451,-99.14],[50120000.0,-2.469,-100.25],[56230000.0,-3.492,-101.49],[63100000.0,-4.521,-102.88],[70790000.0,-5.558,-104.43],[79430000.0,-6.604,-106.16],[89130000.0,-7.662,-108.08],[100000000.0,-8.734,-110.21],[112200000.0,-9.825,-112.57],[125900000.0,-10.937,-115.16],[141300000.0,-12.074,-118.01],[158500000.0,-13.242,-121.12],[177800000.0,-14.444,-124.5],[199500000.0,-15.687,-128.14],[223900000.0,-16.976,-132.07],[251200000.0,-18.316,-136.26],[281800000.0,-19.716,-140.71],[316200000.0,-21.181,-145.39],[354800000.0,-22.717,-150.27],[398100000.0,-24.331,-155.29],[446700000.0,-26.026,-160.4],[501200000.0,-27.801,-165.53],[562300000.0,-29.654,-170.58],[631000000.0,-31.576,-175.51],[707900000.0,-33.558,-180.23],[794300000.0,-35.584,-184.71],[891300000.0,-37.638,-188.94],[1000000000.0,-39.701,-192.92]]</script>
-          <div class="plot"></div>
-          <div class="readout" aria-live="off"></div>
-          <figcaption><b>Open-loop response, final design with clamps.</b> LTspice AC sweep, C<sub>L</sub> = 1 pF, TT corner at 27&nbsp;&deg;C, with DC feedback through a large inductor to hold the output at 1.65 V.
-            Single-stage, so the load capacitor sets the dominant pole and the phase stays close to &minus;90&deg; up to unity gain.
-            Hover or tap to read off any frequency.</figcaption>
-        </figure>
-
-        <figure class="figure optional">
-          <img src="images/folded-cascode/image9.jpg" alt="Schematic of the folded cascode op-amp with narrow-diode bias circuit and NMOS clamps M12 and M13">
-          <figcaption><b>Schematic.</b> NMOS input pair M1/M2 with tail M11, PMOS folding sources M9/M10, PMOS cascodes M3/M4,
-            NMOS cascode mirror M5&ndash;M8, clamps M12/M13, and the narrow-diode bias circuit MB1&ndash;MB6.</figcaption>
-        </figure>
-
-        <div class="table-scroll">
-          <table class="spec">
-            <caption>Specification and results (TT, 27&nbsp;&deg;C)</caption>
-            <thead><tr><th>Parameter</th><th>Specification</th><th>Hand analysis</th><th>Simulated</th></tr></thead>
-            <tbody>
-              <tr><td>Open-loop DC gain</td><td>&ge; 60.2 dB</td><td class="num">77.5 dB</td><td class="num">79.1 dB</td></tr>
-              <tr><td>Unity-gain frequency, f<sub>t</sub></td><td>&ge; 19.9 MHz</td><td class="num">&mdash;</td><td class="num">37.9 MHz</td></tr>
-              <tr><td>&minus;3 dB bandwidth</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">4.24 kHz</td></tr>
-              <tr><td>Phase margin</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">82.2&deg;</td></tr>
-              <tr><td>Gain margin</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">36.2 dB</td></tr>
-              <tr><td>Settling to 2<sup>&minus;9</sup> at &beta; = 0.5, 1 V step (rise / fall)</td><td>&le; 100 ns</td><td class="num">&mdash;</td><td class="num">73.5 / 70.5 ns</td></tr>
-              <tr><td>Slew rate, unity-gain buffer (rise / fall)</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">44.4 / 46.4 V/&micro;s</td></tr>
-              <tr><td>Output swing</td><td>&mdash;</td><td class="num">1.16 to 2.73 V</td><td class="num">&mdash;</td></tr>
-              <tr><td>CMRR at low frequency (matched devices)</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">73.2 dB</td></tr>
-              <tr><td>Input offset, Monte Carlo &sigma;</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">7.31 mV</td></tr>
-              <tr><td>Supply current / power</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">126.6 &micro;A / 0.418 mW</td></tr>
-            </tbody>
-          </table>
-        </div>
-
         <div class="split">
-          <h2>Design notes</h2>
+          <h2>Overview</h2>
           <div class="prose">
-            <h3 style="margin-top:0">From settling spec to bias current</h3>
-            <p>The target is a feedback factor of &beta; = 0.5 settling to &epsilon; = 2<sup>&minus;9</sup> within 100 ns. That sets
-              A<sub>0</sub> &gt; 1/(&epsilon;&beta;) = 60.2 dB and f<sub>t</sub> &gt; &minus;ln(&epsilon;)/(2&pi;&beta;t) = 19.9 MHz. As a
-              single-pole amplifier, f<sub>t</sub> = G<sub>m</sub>/(2&pi;C<sub>L</sub>), which fixes the input-pair g<sub>m</sub> and, at a
-              0.2 V overdrive, the tail current. I settled on a 60 &micro;A tail, 30 &micro;A per input device and 45 &micro;A folding sources.</p>
-            <h3>Sizing from current density</h3>
-            <p>Every device runs at V<sub>OV</sub> = 0.2 V. I measured I<sub>D</sub>/W for a 0.56 &micro;m-long NMOS (5.95 &micro;A/&micro;m)
-              and PMOS (1.46 &micro;A/&micro;m) at that overdrive in LTspice, then set each width from its branch current. The operating point
-              puts every V<sub>dsat</sub> between 0.20 and 0.24 V.</p>
-            <h3>A bias circuit that doesn't waste headroom</h3>
-            <p>Two stacked diode-connected PMOS devices would generate V<sub>B1</sub>, but they leave M9/M10 about a full threshold voltage
-              above saturation, which comes straight out of the output swing. Instead I undersized one diode (M<sub>B6</sub>) so its larger
-              overdrive sets V<sub>B1</sub> directly. Accounting for the body effect on the cascodes (&Delta;V<sub>t</sub> = 0.145 V),
-              the square law predicts a width ratio of about 12; tuning in simulation landed on 9.8, giving M9/M10 the intended 150 mV of margin
-              (V<sub>SD</sub> = 0.358 V).</p>
-            <h3>Clamps for slewing</h3>
-            <p>A large differential input steers the whole tail current into one side, which can only supply I<sub>B</sub>. The input device
-              and the tail are pushed into triode. NMOS clamps M12/M13 sit off in normal operation (2.3 pA, no effect on the bias point)
-              and turn on only when a folding node falls, keeping M1, M2 and M11 saturated. The gain is small at 1 pF because slewing ends
-              quickly. At 5 pF, the clamps hold V<sub>DS1</sub> above 0.44 V instead of letting it collapse to 96 mV, and the slew rate
-              improves by about 14% on the rising edge and 10% on the falling edge.</p>
-            <h3>Gain, by hand and in simulation</h3>
-            <p>Using the simulated g<sub>m</sub>, g<sub>mb</sub> and r<sub>o</sub>, the cascoded output resistance gives a hand-calculated
-              gain of 77.5 dB. The output resistance is set mostly by the upper (PMOS) side, where M9/M10 run at a small V<sub>SD</sub> and
-              have the lowest r<sub>o</sub> in the circuit. The AC bench measures 79.1 dB: the hand numbers come from an operating point with the
-              output at 2.09 V, while the bench's DC feedback holds it at 1.65 V, which changes the output devices' r<sub>o</sub>.</p>
+            <p>The node collects sensor data and talks to a mobile app over Bluetooth and Wi-Fi. In the app, a decision model works out the
+              best time to water and sends the command back to the device.</p>
+            <h3>What I built</h3>
+            <ul>
+              <li>The custom sensor and controller PCB in KiCad, from schematic through layout.</li>
+              <li>The enclosure in Fusion 360, housing the board and routing the wiring.</li>
+              <li>A detection algorithm that recognises and logs each time the plant is watered.</li>
+            </ul>
           </div>
         </div>
 
-        <div class="table-scroll">
-          <table class="spec">
-            <caption>Unity-gain step response, 1.5 to 2.5 V, C<sub>L</sub> = 1 pF</caption>
-            <thead><tr><th>Measurement</th><th>Without clamps</th><th>With clamps</th></tr></thead>
-            <tbody>
-              <tr><td>Rising slew rate</td><td class="num">39.3 V/&micro;s</td><td class="num">44.4 V/&micro;s</td></tr>
-              <tr><td>Falling slew rate</td><td class="num">44.6 V/&micro;s</td><td class="num">46.4 V/&micro;s</td></tr>
-              <tr><td>Settling to 2<sup>&minus;9</sup>, rising</td><td class="num">38.9 ns</td><td class="num">36.8 ns</td></tr>
-              <tr><td>Settling to 2<sup>&minus;9</sup>, falling</td><td class="num">35.0 ns</td><td class="num">30.9 ns</td></tr>
-              <tr><td>Undershoot</td><td class="num">20.0 mV</td><td class="num">10.6 mV</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
-          <figure class="figure optional">
-            <img src="images/folded-cascode/rising_5pf.png" alt="Rising-edge step response at 5 pF with and without clamps, showing output, V_DS1, input-pair currents and clamp current">
-            <figcaption><b>Rising edge at 5 pF, with and without clamps.</b> Without clamps V<sub>DS1</sub> falls to 96 mV and M1 enters triode;
-              with clamps it stays above 0.437 V. Slew rate rises from 7.21 to 8.24 V/&micro;s.</figcaption>
-          </figure>
-          <figure class="figure optional">
-            <img src="images/folded-cascode/falling_5pf.png" alt="Falling-edge step response at 5 pF with and without clamps, showing output, V_DS2, input-pair currents and clamp current">
-            <figcaption><b>Falling edge at 5 pF, with and without clamps.</b> Without clamps V<sub>DS2</sub> falls to 104 mV and M2 enters triode;
-              with clamps it stays above 0.528 V. Slew rate rises from 7.34 to 8.06 V/&micro;s.</figcaption>
-          </figure>
-        </div>
-
-        <div class="split">
-          <h2>Settling at the real feedback factor</h2>
-          <div class="prose">
-            <p>The unity-gain steps above use &beta; = 1, but the specification is for &beta; = 0.5, which halves the closed-loop bandwidth.
-              I checked it directly with the op-amp as an inverting amplifier with capacitive feedback, C<sub>in</sub> = C<sub>f</sub> = 0.5 pF,
-              stepping the output 1 V. It settles to 2<sup>&minus;9</sup> of the ideal output in 73.5 ns rising and 70.5 ns falling, against
-              the 100 ns limit, about 27% margin. That is roughly twice the unity-gain settling time, as expected.</p>
-            <p>At each edge the output first jumps 0.2 V the wrong way, because the input step couples through the feedback capacitors into the
-              load before the amplifier responds. The clamps change settling by at most 1.1 ns here: most of the time is spent in the linear
-              phase, which they don't touch. Their benefit shows with heavier loads.</p>
+        <div class="gallery-group">
+          <h3>Finished device</h3>
+          <div class="gallery">
+            <button type="button"><img src="images/capstone-finished_design1.png" alt="Finished device, view 1" loading="lazy"></button>
+            <button type="button"><img src="images/capstone-finished_design2.png" alt="Finished device, view 2" loading="lazy"></button>
+            <button type="button"><img src="images/capstone-finished_design3.png" alt="Finished device, view 3" loading="lazy"></button>
           </div>
         </div>
-
-        <div class="table-scroll">
-          <table class="spec">
-            <caption>Closed-loop step at &beta; = 0.5, 1 V output step (C<sub>in</sub> = C<sub>f</sub> = 0.5 pF, C<sub>L</sub> = 1 pF)</caption>
-            <thead><tr><th>Measurement</th><th>Without clamps</th><th>With clamps</th></tr></thead>
-            <tbody>
-              <tr><td>Settling to 2<sup>&minus;9</sup>, rising</td><td class="num">73.0 ns</td><td class="num">73.5 ns</td></tr>
-              <tr><td>Settling to 2<sup>&minus;9</sup>, falling</td><td class="num">71.6 ns</td><td class="num">70.5 ns</td></tr>
-              <tr><td>10&ndash;90% transition rate (rise / fall)</td><td class="num">29.2 / 28.8 V/&micro;s</td><td class="num">30.4 / 30.8 V/&micro;s</td></tr>
-              <tr><td>Static error (rise / fall)</td><td class="num">&minus;0.66 / &minus;0.35 mV</td><td class="num">&minus;0.66 / &minus;0.35 mV</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <figure class="figure optional">
-          <img src="images/folded-cascode/fc_beta_step.png" alt="Closed-loop step response at beta 0.5 with the settling error band">
-          <figcaption><b>Closed-loop step at &beta; = 0.5.</b> Output against the ideal output, and the error as it enters the 2<sup>&minus;9</sup> band.</figcaption>
-        </figure>
-
-        <figure class="figure optional">
-          <img src="images/folded-cascode/fc_cmrr.png" alt="Differential gain, common-mode gain and CMRR versus frequency">
-          <figcaption><b>CMRR.</b> 73.2 dB at low frequency, rolling off from about 10 MHz with its &minus;3 dB point near 16 MHz. Simulated with matched devices,
-            so mismatch would lower it.</figcaption>
-        </figure>
-
-        <div class="split">
-          <h2>Across process and temperature</h2>
-          <div class="prose">
-            <p>I swept TT, SS, FF, SF and FS at &minus;40, 27, 85 and 125&nbsp;&deg;C. Both specifications hold everywhere, with at least
-              15.9 dB of margin on gain and 43% on f<sub>t</sub>. Temperature matters most: as mobility falls, f<sub>t</sub> drops about 36%
-              from &minus;40 to 125&nbsp;&deg;C. Because the load capacitor compensates the amplifier, the phase margin moves by less than 2&deg;
-              across all 20 conditions.</p>
+        <div class="gallery-group">
+          <h3>Schematic</h3>
+          <div class="gallery">
+            <button type="button"><img src="images/capstone-schematic.png" alt="Sensor and controller schematic" loading="lazy"></button>
           </div>
         </div>
-
-        <div class="table-scroll">
-          <table class="spec">
-            <caption>Worst case across all corners and temperatures</caption>
-            <thead><tr><th>Parameter</th><th>Specification</th><th>Worst case</th><th>Where</th></tr></thead>
-            <tbody>
-              <tr><td>DC gain</td><td>&ge; 60.2 dB</td><td class="num">76.1 dB</td><td>SF, 125&nbsp;&deg;C</td></tr>
-              <tr><td>Unity-gain frequency</td><td>&ge; 19.9 MHz</td><td class="num">28.5 MHz</td><td>SS and SF, 125&nbsp;&deg;C</td></tr>
-              <tr><td>Phase margin</td><td>&mdash;</td><td class="num">81.1&deg;</td><td>FS, &minus;40&nbsp;&deg;C</td></tr>
-              <tr><td>Gain margin</td><td>&mdash;</td><td class="num">33.7 dB</td><td>FS, &minus;40&nbsp;&deg;C</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <figure class="figure optional">
-          <img src="images/folded-cascode/corners_vs_temp.png" alt="DC gain, unity-gain frequency, phase margin and gain margin across process corners and temperature">
-          <figcaption><b>Performance across corners and temperature.</b> f<sub>t</sub> is set by the NMOS input pair, so SS and SF overlap, as do FF and FS.</figcaption>
-        </figure>
-
-        <div class="split">
-          <h2>Monte Carlo</h2>
-          <div class="prose">
-            <p>Corners can't show mismatch between identical devices, so I ran two 500-trial Monte Carlo runs in ngspice with the PDK's
-              statistical models: mismatch only, and global process variation plus mismatch. No trial failed either specification; the lowest
-              gain was 67.3 dB and the lowest f<sub>t</sub> 21.9 MHz. The input offset is 0.85 &plusmn; 7.31 mV, nearly the same with or without
-              global variation, so it comes from mismatch. At &beta; = 0.5 that is about &plusmn;44 mV (3&sigma;) at the output, the main
-              limitation of the design.</p>
-            <p>The phase margin has a long low tail: seven trials fell below 75&deg;, and the worst reached 37.3&deg;. In that trial global
-              variation raised the tail current to 67.3 &micro;A and lowered the folding current to 34.0 &micro;A, leaving only about
-              0.3 &micro;A in the cascode branch instead of 18 &micro;A. With almost no current, g<sub>m3,4</sub> collapses and the
-              folding-node pole drops toward f<sub>t</sub>. Both bias mirrors pair a narrow reference device with a wide output device in a
-              different model bin, which widens the spread of both currents. A larger ratio of I<sub>B</sub> to I/2, or geometry-matched
-              mirrors, would remove the tail.</p>
+        <div class="gallery-group">
+          <h3>PCB</h3>
+          <div class="gallery">
+            <button type="button"><img src="images/capstone-pcb_render1.png" alt="PCB render, view 1" loading="lazy"></button>
+            <button type="button"><img src="images/capstone-pcb_render2.png" alt="PCB render, view 2" loading="lazy"></button>
+            <button type="button"><img src="images/capstone-pcb_render3.png" alt="PCB render, view 3" loading="lazy"></button>
           </div>
         </div>
-
-        <div class="table-scroll">
-          <table class="spec">
-            <caption>Monte Carlo, 500 trials each (TT, 27&nbsp;&deg;C, &mu; &plusmn; &sigma;)</caption>
-            <thead><tr><th>Measurement</th><th>Mismatch only</th><th>Global + mismatch</th><th>Worst trial</th></tr></thead>
-            <tbody>
-              <tr><td>Input offset</td><td class="num">0.89 &plusmn; 7.26 mV</td><td class="num">0.85 &plusmn; 7.31 mV</td><td class="num">28.3 mV</td></tr>
-              <tr><td>DC gain</td><td class="num">79.09 &plusmn; 1.68 dB</td><td class="num">79.14 &plusmn; 3.46 dB</td><td class="num">67.3 dB</td></tr>
-              <tr><td>Unity-gain frequency</td><td class="num">37.76 &plusmn; 1.16 MHz</td><td class="num">37.54 &plusmn; 2.08 MHz</td><td class="num">21.9 MHz</td></tr>
-              <tr><td>Phase margin</td><td class="num">82.22 &plusmn; 0.64&deg;</td><td class="num">81.76 &plusmn; 2.96&deg;</td><td class="num">37.3&deg;</td></tr>
-              <tr><td>Gain margin</td><td class="num">35.62 &plusmn; 0.74 dB</td><td class="num">35.36 &plusmn; 2.18 dB</td><td class="num">15.7 dB</td></tr>
-            </tbody>
-          </table>
+        <div class="gallery-group">
+          <h3>Enclosure</h3>
+          <div class="gallery">
+            <button type="button"><img src="images/capstone-enclosure.png" alt="Enclosure design, view 1" loading="lazy"></button>
+            <button type="button"><img src="images/capstone-enclosure2.png" alt="Enclosure design, view 2" loading="lazy"></button>
+            <button type="button"><img src="images/capstone-enclosure3.png" alt="Enclosure design, view 3" loading="lazy"></button>
+          </div>
         </div>
-
-        <figure class="figure optional">
-          <img src="images/folded-cascode/fc_11_mc.png" alt="Monte Carlo histograms of offset, gain, unity-gain frequency, phase margin and gain margin">
-          <figcaption><b>Monte Carlo histograms, global + mismatch.</b> Lines mark the mean and &plusmn;3&sigma;; note the phase margin's low tail.</figcaption>
-        </figure>
-
-        <div class="table-scroll">
-          <table class="spec">
-            <caption>Operating point (LTspice .op, all devices L = 0.56 &micro;m)</caption>
-            <thead><tr><th>Device</th><th>Role</th><th>W (&micro;m)</th><th>I<sub>D</sub> (&micro;A)</th><th>|V<sub>GS</sub>| (V)</th><th>|V<sub>DS</sub>| (V)</th><th>|V<sub>th</sub>| (V)</th><th>V<sub>dsat</sub> (V)</th><th>g<sub>m</sub> (&micro;S)</th><th>g<sub>ds</sub> (&micro;S)</th></tr></thead>
-            <tbody>
-              <tr><td>M1, M2</td><td>NMOS input pair</td><td class="num">5.04</td><td class="num">30.0</td><td class="num">1.07</td><td class="num">2.36</td><td class="num">0.887</td><td class="num">0.208</td><td class="num">251</td><td class="num">1.06</td></tr>
-              <tr><td>M3, M4</td><td>PMOS cascode</td><td class="num">10.27</td><td class="num">17.7</td><td class="num">1.15</td><td class="num">0.848</td><td class="num">0.938</td><td class="num">0.220</td><td class="num">142</td><td class="num">0.847</td></tr>
-              <tr><td>M5, M6</td><td>NMOS cascode (mirror)</td><td class="num">2.52</td><td class="num">17.7</td><td class="num">1.18</td><td class="num">1.18</td><td class="num">0.970</td><td class="num">0.236</td><td class="num">135</td><td class="num">0.774</td></tr>
-              <tr><td>M7, M8</td><td>NMOS mirror</td><td class="num">2.52</td><td class="num">17.7</td><td class="num">0.912</td><td class="num">0.912</td><td class="num">0.703</td><td class="num">0.224</td><td class="num">134</td><td class="num">0.940</td></tr>
-              <tr><td>M9, M10</td><td>PMOS folding current sources</td><td class="num">30.82</td><td class="num">47.7</td><td class="num">0.992</td><td class="num">0.359</td><td class="num">0.790</td><td class="num">0.202</td><td class="num">396</td><td class="num">5.71</td></tr>
-              <tr><td>M11</td><td>NMOS tail source</td><td class="num">10.08</td><td class="num">60.0</td><td class="num">0.892</td><td class="num">0.583</td><td class="num">0.708</td><td class="num">0.205</td><td class="num">495</td><td class="num">4.27</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <p class="small muted">Possible next step: re-bias with a larger I<sub>B</sub>/(I/2) ratio and re-run Monte Carlo to remove the phase-margin tail.</p>
       </div>
     </section>
 
@@ -266,6 +97,6 @@
       </nav>
     </div>
   </footer>
-  <script src="site.js?v=9"></script>
+  <script src="site.js?v=12"></script>
 </body>
 </html>
