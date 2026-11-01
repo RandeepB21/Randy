@@ -103,7 +103,7 @@
               0.2 V overdrive, the tail current. I settled on a 60 &micro;A tail, 30 &micro;A per input device and 45 &micro;A folding sources.</p>
             <h3>Sizing from current density</h3>
             <p>Every device runs at V<sub>OV</sub> = 0.2 V. I measured I<sub>D</sub>/W for a 0.56 &micro;m-long NMOS (5.95 &micro;A/&micro;m)
-              and PMOS (1.46 &micro;A/&micro;m) at that overdrive in LTspice, then set each width from its branch current. The operating point
+              and PMOS (1.46 &micro;A/&micro;m) at that overdrive in LTspice, then set each width based on the desired current density. The operating point
               puts every V<sub>dsat</sub> between 0.20 and 0.24 V.</p>
             <h3>A bias circuit that doesn't waste headroom</h3>
             <p>Two stacked diode-connected PMOS devices would generate V<sub>B1</sub>, but they leave M9/M10 about a full threshold voltage
