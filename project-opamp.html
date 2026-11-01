@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
   <header class="site-header">
@@ -123,7 +123,7 @@
             <h3 style="margin-top:0">Sizing</h3>
             <p>Every device runs at V<sub>OV</sub> = 0.2 V with L = 0.56 &micro;m. I measured I<sub>D</sub>/W for each device type at that
               overdrive in LTspice, then set widths from branch currents: 10 &micro;A per input device and 82 &micro;A in the second stage.
-              M6 is sized from the systematic-offset condition (W/L)<sub>6</sub>/(W/L)<sub>4</sub> = 2(W/L)<sub>7</sub>/(W/L)<sub>5</sub>.
+              M6 is sized from the systematic-offset condition (W/L)<sub>6</sub>/(W/L)<sub>4</sub> = 2(W/L)<sub>7</sub>/(W/L)<sub>5</sub> <a class="cite" href="#ref-1">[1]</a>.
               By hand, each stage gives about 102 and 120 V/V, for 81.8 dB overall, which matches simulation.</p>
             <h3>Why it needs compensation</h3>
             <p>Without compensation the two main poles sit close together, at about 700 kHz (first-stage output) and 850 kHz (output),
@@ -131,18 +131,18 @@
               is Miller-multiplied by the second-stage gain, which takes C<sub>1</sub> from about 7 fF to 193 fF. Two poles alone would leave
               about 0&deg; of margin; simulation gives &minus;8.2&deg;, so higher-frequency poles such as the mirror node add the rest.
               Either way it is unstable as a unity-gain buffer. Miller capacitance C<sub>C</sub> splits the poles, but adds a
-              right-half-plane zero at g<sub>m6</sub>/C<sub>C</sub>. A resistor of 1/g<sub>m6</sub> = 1479 &Omega; in series with C<sub>C</sub>
+              right-half-plane zero at g<sub>m6</sub>/C<sub>C</sub> <a class="cite" href="#ref-1">[1]</a>. A resistor of 1/g<sub>m6</sub> = 1479 &Omega; in series with C<sub>C</sub>
               pushes that zero to infinity, leaving PM = 90&deg; &minus; tan<sup>&minus;1</sup>(f<sub>t</sub>/f<sub>p2</sub>). Targeting 60&deg; gives
               C<sub>C</sub> = 233.8 fF, and simulation returns 56.9&deg;.</p>
             <h3>The large step that changed C<sub>C</sub></h3>
             <p>That design overshot a large step by 15.8%. During slewing, the first stage pulled M6's gate below threshold and switched
-              it off. The output stage can only keep up if I<sub>7</sub> &ge; I(1 + C<sub>2</sub>/C<sub>C</sub>). With I<sub>7</sub> fixed at
+              it off. The output stage can only keep up if I<sub>7</sub> &ge; I(1 + C<sub>2</sub>/C<sub>C</sub>) <a class="cite" href="#ref-1">[1]</a>. With I<sub>7</sub> fixed at
               81.9 &micro;A, that means C<sub>C</sub> &ge; 330 fF, which is the same as asking for a phase margin of at least 67.7&deg;. I raised
               C<sub>C</sub> to 350 fF. Overshoot fell to 3.4% and M6's gate stayed above 0.715 V, at the cost of f<sub>t</sub> dropping from
               49.6 to 35.6 MHz.</p>
             <h3>A resistor that tracks g<sub>m6</sub></h3>
             <p>A fixed resistor only cancels the zero at one value of g<sub>m6</sub>, and g<sub>m6</sub> drifts with process and temperature.
-              Instead I biased an NMOS M<sub>Z</sub> in triode at the same overdrive as M6, so R<sub>Z</sub>g<sub>m6</sub> depends only on the
+              Instead I biased an NMOS M<sub>Z</sub> in triode at the same overdrive as M6 <a class="cite" href="#ref-2">[2]</a>, so R<sub>Z</sub>g<sub>m6</sub> depends only on the
               width ratio. A diode stack at M6's current density sets M<sub>Z</sub>'s gate, so V<sub>OV,Z</sub> follows V<sub>OV6</sub>. I sized
               for R<sub>Z</sub>g<sub>m6</sub> = 1.2, a little above 1, which moves the zero into the left half-plane to add phase. The first
               sizing gave 1.144, and resizing W<sub>Z</sub> from 11.2 to 10.7 &micro;m landed exactly on 1.20.</p>
@@ -205,7 +205,7 @@
           <h2>Monte Carlo: the opposite result</h2>
           <div class="prose">
             <p>Corners move every NMOS together and every PMOS together, so they can't show mismatch. I ran 500-trial Monte Carlo in ngspice with
-              the PDK's statistical models, separating global process variation from device-to-device mismatch. The result reversed the corner
+              the PDK's statistical models <a class="cite" href="#ref-3">[3]</a>, separating global process variation from device-to-device mismatch. The result reversed the corner
               picture: from chip to chip, M<sub>Z</sub>'s phase margin varied three times as much as the poly resistor's (&sigma; = 1.81&deg;
               against 0.58&deg;), with k ranging from 0.83 to 2.77.</p>
             <p>A triode resistor is very sensitive to its overdrive: at V<sub>OV,Z</sub> &asymp; 0.2 V, each millivolt of error moves
@@ -234,9 +234,24 @@
           </table>
         </div>
 
+        <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+          <figure class="figure optional">
+            <img src="images/two-stage/ts_rpdk_11_mc.png" alt="Monte Carlo histograms for the PDK poly resistor design, global plus mismatch">
+            <figcaption><b>PDK poly R<sub>Z</sub>, global + mismatch.</b> 500 trials, TT, 27&nbsp;&deg;C. k stays between 0.84 and 1.18, and the phase
+              margin is 66.17 &plusmn; 0.58&deg;. Solid line: mean; dotted: &mu; &plusmn; 3&sigma;.</figcaption>
+          </figure>
+          <figure class="figure optional">
+            <img src="images/two-stage/ts_mz_11_mc.png" alt="Monte Carlo histograms for the triode M_Z design with the original bias, global plus mismatch">
+            <figcaption><b>Triode M<sub>Z</sub>, original bias, global + mismatch.</b> 500 trials, TT, 27&nbsp;&deg;C. k spreads from 0.83 to 2.77 and the
+              phase margin (65.72 &plusmn; 1.81&deg;) is skewed high, to 75.25&deg;. Solid line: mean; dotted: &mu; &plusmn; 3&sigma;.</figcaption>
+          </figure>
+        </div>
+
         <figure class="figure optional">
-          <img src="images/two-stage/ts_mz8x_11_mc.png" alt="Monte Carlo histograms of k and phase margin for the original and 8x bias designs">
-          <figcaption><b>Monte Carlo histograms.</b> Moving the bias devices into M6's model bin collapses the spread in k and phase margin.</figcaption>
+          <img src="images/two-stage/ts_mz8x_11_mc.png" alt="Monte Carlo histograms of the triode M_Z design with 8x bias devices">
+          <figcaption><b>Triode M<sub>Z</sub>, bias devices widened 8&times;, global + mismatch.</b> With M<sub>A</sub>, M<sub>B</sub> and M<sub>P</sub> in
+            M6's model bin, the spread in R<sub>Z</sub> falls from 19.8% to 3.7%, &sigma;<sub>k</sub> from 0.248 to 0.043, and the phase margin narrows
+            to 65.70 &plusmn; 0.57&deg;.</figcaption>
         </figure>
 
         <div class="table-scroll">
@@ -255,6 +270,16 @@
         </div>
 
         <p class="small muted">Next: layout of the first stage (M1&ndash;M4) in Magic, with DRC, LVS and post-layout simulation.</p>
+
+        <div class="split">
+          <h2>References</h2>
+          <ol class="refs">
+            <li id="ref-1">A. S. Sedra and K. C. Smith, <i>Microelectronic Circuits</i>, 7th ed. Oxford University Press, 2015.</li>
+            <li id="ref-2">B. Razavi, <i>Design of Analog CMOS Integrated Circuits</i>, 2nd ed. McGraw-Hill Education, 2017.</li>
+            <li id="ref-3">GlobalFoundries, &ldquo;GF180MCU open-source PDK,&rdquo; model release 2024-01-01.
+              <a href="https://github.com/google/gf180mcu-pdk" rel="noopener">github.com/google/gf180mcu-pdk</a></li>
+          </ol>
+        </div>
       </div>
     </section>
 
@@ -271,7 +296,7 @@
       </nav>
     </div>
   </footer>
-  <script src="site.js?v=10"></script>
+  <script src="site.js?v=12"></script>
   <script src="comp.js?v=12"></script>
   <script src="report.js?v=12"></script>
 </body>
