@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
   <header class="site-header">
@@ -99,7 +99,7 @@
             <h3 style="margin-top:0">From settling spec to bias current</h3>
             <p>The target is a feedback factor of &beta; = 0.5 settling to &epsilon; = 2<sup>&minus;9</sup> within 100 ns. That sets
               A<sub>0</sub> &gt; 1/(&epsilon;&beta;) = 60.2 dB and f<sub>t</sub> &gt; &minus;ln(&epsilon;)/(2&pi;&beta;t) = 19.9 MHz. As a
-              single-pole amplifier, f<sub>t</sub> = G<sub>m</sub>/(2&pi;C<sub>L</sub>), which fixes the input-pair g<sub>m</sub> and, at a
+              single-pole amplifier, f<sub>t</sub> = G<sub>m</sub>/(2&pi;C<sub>L</sub>) <a class="cite" href="#ref-1">[1]</a>, which fixes the input-pair g<sub>m</sub> and, at a
               0.2 V overdrive, the tail current. I settled on a 60 &micro;A tail, 30 &micro;A per input device and 45 &micro;A folding sources.</p>
             <h3>Sizing from current density</h3>
             <p>Every device runs at V<sub>OV</sub> = 0.2 V. I measured I<sub>D</sub>/W for a 0.56 &micro;m-long NMOS (5.95 &micro;A/&micro;m)
@@ -113,7 +113,7 @@
               (V<sub>SD</sub> = 0.358 V).</p>
             <h3>Clamps for slewing</h3>
             <p>A large differential input steers the whole tail current into one side, which can only supply I<sub>B</sub>. The input device
-              and the tail are pushed into triode. NMOS clamps M12/M13 sit off in normal operation (2.3 pA, no effect on the bias point)
+              and the tail are pushed into triode. NMOS clamps M12/M13 <a class="cite" href="#ref-1">[1]</a> sit off in normal operation (2.3 pA, no effect on the bias point)
               and turn on only when a folding node falls, keeping M1, M2 and M11 saturated. The gain is small at 1 pF because slewing ends
               quickly. At 5 pF, the clamps hold V<sub>DS1</sub> above 0.44 V instead of letting it collapse to 96 mV, and the slew rate
               improves by about 14% on the rising edge and 10% on the falling edge.</p>
@@ -123,6 +123,19 @@
               have the lowest r<sub>o</sub> in the circuit. The AC bench measures 79.1 dB: the hand numbers come from an operating point with the
               output at 2.09 V, while the bench's DC feedback holds it at 1.65 V, which changes the output devices' r<sub>o</sub>.</p>
           </div>
+        </div>
+
+        <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+          <figure class="figure optional">
+            <img src="images/folded-cascode/image2.jpg" data-alt="images/folded-cascode/image2.png" alt="Bias circuit with two stacked diode-connected PMOS devices generating V_B1 and V_B2">
+            <figcaption><b>Option 1: two stacked diode-connected PMOS.</b> V<sub>B1</sub> = V<sub>DD</sub> &minus; 2V<sub>OV</sub> &minus; 2|V<sub>tp</sub>| &minus; &Delta;V<sub>t</sub>.
+              This leaves M9/M10 with V<sub>SD</sub> &asymp; V<sub>SGB2</sub>, about a full threshold voltage more than they need, which comes out of the output swing.</figcaption>
+          </figure>
+          <figure class="figure optional">
+            <img src="images/folded-cascode/image3.jpg" data-alt="images/folded-cascode/image3.png" alt="Bias circuit with a narrow diode-connected PMOS MB6 generating V_B1">
+            <figcaption><b>Option 2, used: a narrow diode-connected PMOS.</b> M<sub>B6</sub> is 1/9.8 the width of M<sub>B2</sub> (0.7 &micro;m), so its larger
+              overdrive sets V<sub>B1</sub> = 1.792 V directly. M9/M10 sit 150 mV above saturation (V<sub>SD</sub> = 0.358 V) and the output can swing up to 2.73 V.</figcaption>
+          </figure>
         </div>
 
         <div class="table-scroll">
@@ -139,16 +152,48 @@
           </table>
         </div>
 
+        <div class="split">
+          <h2>What the clamps do at 5 pF</h2>
+          <div class="prose">
+            <p>At 1 pF slewing ends too quickly for the clamps to matter much, so I repeated the unity-gain step with a 5 pF load and a 0.6 V step
+              (1.4 to 2.0 V and back) to watch them work.</p>
+            <p><b>Rising edge.</b> With M1 carrying the full tail current, V<sub>dsat1</sub> is about 0.30 V. Without clamps, V<sub>DS1</sub>
+              collapses to 96 mV and M1 goes into triode; M2 turns back on and takes about 9 &micro;A, so M1 drops to about 52 &micro;A. With
+              clamps, M12 turns on at about 110 ns, peaks at 2.3 &micro;A and tapers to zero by 142 ns as the pair rebalances. V<sub>DS1</sub>
+              stays above 0.437 V, M2 stays off, M1 keeps close to the full 60 &micro;A, and the slew rate rises from 7.21 to 8.24 V/&micro;s.</p>
+            <p><b>Falling edge.</b> The mirror image: without clamps V<sub>DS2</sub> falls to 104 mV and M1 conducts about 7 &micro;A;
+              with clamps M13 turns on at about 311 ns, peaks at 2.2 &micro;A, V<sub>DS2</sub> stays above 0.528 V, and the slew rate rises
+              from 7.34 to 8.06 V/&micro;s.</p>
+            <p>In the unity-gain connection the tail source M11 stays in saturation either way, because the second input device turning back on
+              limits how far the tail node falls. The clamps matter most when that device is held off, as in the open-loop test, where without
+              them both M1 and M11 end up in triode.</p>
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table class="spec">
+            <caption>Unity-gain step at 5 pF, 1.4 to 2.0 V</caption>
+            <thead><tr><th>Measurement</th><th>Rising, no clamps</th><th>Rising, clamps</th><th>Falling, no clamps</th><th>Falling, clamps</th></tr></thead>
+            <tbody>
+              <tr><td>Slew rate</td><td class="num">7.21 V/&micro;s</td><td class="num">8.24 V/&micro;s</td><td class="num">7.34 V/&micro;s</td><td class="num">8.06 V/&micro;s</td></tr>
+              <tr><td>Lowest V<sub>DS</sub> of the slewing input device</td><td class="num">96 mV</td><td class="num">0.437 V</td><td class="num">104 mV</td><td class="num">0.528 V</td></tr>
+              <tr><td>Region of the slewing input device</td><td>Triode</td><td>Saturation</td><td>Triode</td><td>Saturation</td></tr>
+              <tr><td>Current in the other input device</td><td class="num">&asymp; 9 &micro;A</td><td class="num">off</td><td class="num">&asymp; 7 &micro;A</td><td class="num">off</td></tr>
+              <tr><td>Peak clamp current</td><td class="num">&mdash;</td><td class="num">2.3 &micro;A (M12)</td><td class="num">&mdash;</td><td class="num">2.2 &micro;A (M13)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
         <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
           <figure class="figure optional">
             <img src="images/folded-cascode/rising_5pf.png" alt="Rising-edge step response at 5 pF with and without clamps, showing output, V_DS1, input-pair currents and clamp current">
-            <figcaption><b>Rising edge at 5 pF, with and without clamps.</b> Without clamps V<sub>DS1</sub> falls to 96 mV and M1 enters triode;
-              with clamps it stays above 0.437 V. Slew rate rises from 7.21 to 8.24 V/&micro;s.</figcaption>
+            <figcaption><b>Rising edge at 5 pF.</b> Without clamps (dashed) and with clamps (solid): (a) input and output, (b) V<sub>DS1</sub>,
+              (c) tail V<sub>DS11</sub>, (d) input-pair currents, (e) clamp M12.</figcaption>
           </figure>
           <figure class="figure optional">
             <img src="images/folded-cascode/falling_5pf.png" alt="Falling-edge step response at 5 pF with and without clamps, showing output, V_DS2, input-pair currents and clamp current">
-            <figcaption><b>Falling edge at 5 pF, with and without clamps.</b> Without clamps V<sub>DS2</sub> falls to 104 mV and M2 enters triode;
-              with clamps it stays above 0.528 V. Slew rate rises from 7.34 to 8.06 V/&micro;s.</figcaption>
+            <figcaption><b>Falling edge at 5 pF.</b> Without clamps (dashed) and with clamps (solid): (a) input and output, (b) V<sub>DS2</sub>,
+              (c) tail V<sub>DS11</sub>, (d) input-pair currents, (e) clamp M13.</figcaption>
           </figure>
         </div>
 
@@ -180,7 +225,9 @@
 
         <figure class="figure optional">
           <img src="images/folded-cascode/fc_beta_step.png" alt="Closed-loop step response at beta 0.5 with the settling error band">
-          <figcaption><b>Closed-loop step at &beta; = 0.5.</b> Output against the ideal output, and the error as it enters the 2<sup>&minus;9</sup> band.</figcaption>
+          <figcaption><b>Closed-loop step at &beta; = 0.5</b> (C<sub>in</sub> = C<sub>f</sub> = 0.5 pF, C<sub>L</sub> = 1 pF, with clamps). Top: output,
+            node V<sub>&minus;</sub> and the ideal output. Bottom: error against the ideal output; dotted lines mark where it last enters the 2<sup>&minus;9</sup> band
+            (73.5 ns rising, 70.5 ns falling).</figcaption>
         </figure>
 
         <figure class="figure optional">
@@ -221,7 +268,7 @@
           <h2>Monte Carlo</h2>
           <div class="prose">
             <p>Corners can't show mismatch between identical devices, so I ran two 500-trial Monte Carlo runs in ngspice with the PDK's
-              statistical models: mismatch only, and global process variation plus mismatch. No trial failed either specification; the lowest
+              statistical models <a class="cite" href="#ref-2">[2]</a>: mismatch only, and global process variation plus mismatch. No trial failed either specification; the lowest
               gain was 67.3 dB and the lowest f<sub>t</sub> 21.9 MHz. The input offset is 0.85 &plusmn; 7.31 mV, nearly the same with or without
               global variation, so it comes from mismatch. At &beta; = 0.5 that is about &plusmn;44 mV (3&sigma;) at the output, the main
               limitation of the design.</p>
@@ -269,6 +316,15 @@
         </div>
 
         <p class="small muted">Possible next step: re-bias with a larger I<sub>B</sub>/(I/2) ratio and re-run Monte Carlo to remove the phase-margin tail.</p>
+
+        <div class="split">
+          <h2>References</h2>
+          <ol class="refs">
+            <li id="ref-1">A. S. Sedra and K. C. Smith, <i>Microelectronic Circuits</i>, 7th ed. Oxford University Press, 2015.</li>
+            <li id="ref-2">GlobalFoundries, &ldquo;GF180MCU open-source PDK,&rdquo; model release 2024-01-01.
+              <a href="https://github.com/google/gf180mcu-pdk" rel="noopener">github.com/google/gf180mcu-pdk</a></li>
+          </ol>
+        </div>
       </div>
     </section>
 
@@ -285,7 +341,7 @@
       </nav>
     </div>
   </footer>
-  <script src="site.js?v=10"></script>
+  <script src="site.js?v=12"></script>
   <script src="report.js?v=12"></script>
 </body>
 </html>
