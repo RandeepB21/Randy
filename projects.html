@@ -41,19 +41,19 @@
             <div>
               <h3>Two-stage Miller-compensated op-amp</h3>
               <p>Sedra/Smith Example 13.1 topology. Compensation sized for phase margin, then re-sized when a large step showed the second
-                stage cutting off. Compares an ideal nulling resistor with a triode transistor that tracks g<sub>m6</sub> across process and temperature.</p>
-              <span class="status wip">Complete; CMRR in progress</span>
+                stage cutting off. Compares a PDK poly resistor with a triode transistor that tracks g<sub>m6</sub>, across corners, temperature and Monte Carlo.</p>
+              <span class="status">Complete</span>
             </div>
-            <dl class="facts"><dt>Gain</dt><dd>81.7 dB</dd><dt>f<sub>t</sub></dt><dd>34.9 MHz</dd><dt>Phase margin</dt><dd>64.9&deg;</dd><dt>Worst-case PM</dt><dd>63.0&deg;</dd></dl>
+            <dl class="facts"><dt>Gain</dt><dd>81.7 dB</dd><dt>f<sub>t</sub></dt><dd>34.9 MHz</dd><dt>Phase margin</dt><dd>64.9&deg;</dd><dt>Worst-case PM</dt><dd>64.2&deg;</dd></dl>
           </a></li>
           <li><a class="row" href="project-cascode.html">
             <div>
               <h3>Folded cascode op-amp</h3>
               <p>NMOS-input folded cascode with a narrow-diode bias circuit that sets the cascode voltage without wasting headroom, and NMOS
-                clamps that keep the input pair saturated while slewing. Meets gain and bandwidth specs at every corner from &minus;40 to 125&nbsp;&deg;C.</p>
-              <span class="status wip">Complete; CMRR and Monte Carlo in progress</span>
+                clamps that keep the input pair saturated while slewing. Meets gain and bandwidth specs at every corner from &minus;40 to 125&nbsp;&deg;C and in 500 Monte Carlo trials.</p>
+              <span class="status">Complete</span>
             </div>
-            <dl class="facts"><dt>Gain</dt><dd>77.4 dB</dd><dt>f<sub>t</sub></dt><dd>38 MHz</dd><dt>Phase margin</dt><dd>82.2&deg;</dd><dt>Settling</dt><dd>&lt; 37 ns to 2<sup>&minus;9</sup></dd></dl>
+            <dl class="facts"><dt>Gain</dt><dd>79.1 dB</dd><dt>f<sub>t</sub></dt><dd>38 MHz</dd><dt>Phase margin</dt><dd>82.2&deg;</dd><dt>Settling, &beta; = 0.5</dt><dd>73.5 ns to 2<sup>&minus;9</sup></dd></dl>
           </a></li>
           <li><a class="row" href="project-bgr.html">
             <div>
@@ -89,7 +89,7 @@
   <footer class="site-footer">
     <div class="wrap">
       <span class="foot-left"><span>&copy; 2026 Randy</span>
-        <span class="cal-sticker" title="Date this site was last updated"><b>Calibrated</b> <time datetime="2026-10-17">17 Oct 2026</time></span></span>
+        <span class="cal-sticker" title="Date this site was last updated"><b>Calibrated</b> <time datetime="2026-10-31">31 Oct 2026</time></span></span>
       <nav aria-label="Elsewhere">
         <a href="mailto:you@example.com">Email</a>
         <a href="https://www.linkedin.com/in/your-handle" rel="noopener">LinkedIn</a>
