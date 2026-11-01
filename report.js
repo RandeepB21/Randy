@@ -1,6 +1,6 @@
 /* Embedded report viewer.
    <section class="report-viewer" data-pdf="reports/x.pdf" hidden> stays hidden until the PDF exists.
-   Pages are drawn with PDF.js (works on phones, unlike an <iframe>), only when they scroll into view. */
+   Collapsed until opened; pages are drawn with PDF.js (works on phones, unlike an <iframe>), only when they scroll into view. */
 (function () {
   const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/";
 
@@ -21,11 +21,18 @@
       .then((r) => {
         if (!r.ok) return;
         sec.hidden = false;
-        // load the viewer only when the reader gets near it
-        const io = new IntersectionObserver((es) => {
-          if (es.some((e) => e.isIntersecting)) { io.disconnect(); start(sec, url); }
-        }, { rootMargin: "800px 0px" });
-        io.observe(sec);
+        // collapsed until the reader asks for it; the PDF loads on first open
+        const btn = sec.querySelector(".rv-toggle");
+        const pages = sec.querySelector(".rv-pages");
+        let started = false;
+        btn.addEventListener("click", () => {
+          const open = !sec.classList.contains("open");
+          sec.classList.toggle("open", open);
+          pages.hidden = !open;
+          btn.setAttribute("aria-expanded", String(open));
+          btn.textContent = open ? "Hide the report" : "Read the report";
+          if (open && !started) { started = true; start(sec, url); }
+        });
       })
       .catch(() => {});
   });
