@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
   <header class="site-header">
@@ -43,17 +43,20 @@
         <div class="report-viewer" data-pdf="reports/two-stage-opamp.pdf" hidden aria-label="Full report">
           <div class="rv-bar">
             <b>Full report</b>
-            <span>Page <span class="rv-page">1</span> of <span class="rv-count">&ndash;</span></span>
+            <button type="button" class="rv-toggle" aria-expanded="false">Read the report</button>
+            <span class="rv-when-open">Page <span class="rv-page">1</span> of <span class="rv-count">&ndash;</span></span>
             <span class="rv-status" aria-live="polite"></span>
             <span class="rv-tools">
-              <button type="button" class="rv-out" aria-label="Zoom out">&minus;</button>
-              <span class="rv-zoom-val">100%</span>
-              <button type="button" class="rv-in" aria-label="Zoom in">+</button>
+              <span class="rv-when-open rv-zoom">
+                <button type="button" class="rv-out" aria-label="Zoom out">&minus;</button>
+                <span class="rv-zoom-val">100%</span>
+                <button type="button" class="rv-in" aria-label="Zoom in">+</button>
+              </span>
               <a href="reports/two-stage-opamp.pdf" target="_blank" rel="noopener">Open PDF</a>
               <a href="reports/two-stage-opamp.pdf" download>Download</a>
             </span>
           </div>
-          <div class="rv-pages" tabindex="0"></div>
+          <div class="rv-pages" tabindex="0" hidden></div>
         </div>
 
         <figure class="instrument comp-demo" data-comp-demo data-sweep-rz="data/twostage_rz_sweep.txt" data-sweep-mz="data/twostage_mz_sweep.txt">
