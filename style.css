@@ -385,3 +385,28 @@ a.report-link[hidden] { display: none; }
 }
 .nmos-readout .src { opacity: 0.85; }
 .nmos-readout .src i { font-style: normal; color: var(--amber); }
+
+/* ---------- Embedded report viewer ---------- */
+.report-viewer { border: 1px solid var(--rule); border-radius: 6px; background: var(--panel-2); overflow: hidden; }
+.rv-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 10px 14px; border-bottom: 1px solid var(--rule); font-size: 0.88rem; color: var(--ink-2); }
+.rv-bar > b { color: var(--ink); font-family: var(--font-label); letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.82rem; }
+.rv-status { color: var(--ink-2); font-style: italic; }
+.report-viewer:not(.open) .rv-when-open { display: none; }
+.report-viewer:not(.open) .rv-bar { border-bottom: 0; }
+.rv-toggle { font: inherit; font-size: 0.85rem; padding: 7px 12px; border: 1px solid var(--silk); border-radius: 4px; background: var(--silk); color: var(--panel); cursor: pointer; }
+.rv-toggle:hover { filter: brightness(1.1); }
+.rv-zoom { display: inline-flex; align-items: center; gap: 8px; }
+.rv-tools { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.rv-tools button, .rv-tools a { font: inherit; font-size: 0.85rem; line-height: 1; padding: 7px 11px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); color: var(--ink); text-decoration: none; cursor: pointer; }
+.rv-tools button { min-width: 34px; }
+.rv-tools a:hover, .rv-tools button:hover { border-color: var(--silk); color: var(--silk); }
+.rv-zoom-val { min-width: 3.2em; text-align: center; font-variant-numeric: tabular-nums; }
+.rv-pages { --rv-zoom: 1; height: min(62vh, 640px); overflow: auto; padding: 14px; background: #57544D; }
+.rv-pages:focus-visible { outline: 2px solid var(--silk); outline-offset: -2px; }
+.rv-sheet { width: calc(min(100%, 720px) * var(--rv-zoom)); margin: 0 auto 14px; background: #fff; box-shadow: 0 1px 6px rgba(0,0,0,0.45); }
+.rv-sheet:last-child { margin-bottom: 0; }
+.rv-sheet canvas { display: block; width: 100%; height: auto; }
+@media (max-width: 640px) {
+  .rv-pages { height: 58vh; padding: 8px; }
+  .rv-tools { margin-left: 0; }
+}
