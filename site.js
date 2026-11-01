@@ -188,7 +188,7 @@
       return { db: pts[lo][1] + t * (pts[hi][1] - pts[lo][1]), deg: pts[lo][2] + t * (pts[hi][2] - pts[lo][2]) };
     };
   }
-  /* LTspice "Export data as text" (AC, dB/phase format). Handles plain and .step
+  /* LTspice "Export data as text" (AC, dB/phase or Cartesian re,im format). Handles plain and .step
      exports, UTF-8 or UTF-16 files. Returns [{ params, rows: [[f, dB, deg], ...] }]
      with phase unwrapped and referenced to 0 or 180 degrees at the first point. */
   const SPICE = { f: 1e-15, p: 1e-12, n: 1e-9, u: 1e-6, "µ": 1e-6, m: 1e-3, k: 1e3, meg: 1e6, g: 1e9, t: 1e12 };
@@ -204,10 +204,17 @@
         line.replace(/\(Run.*$/, "").replace(/(\w+)=(\S+)/g, (_, k, v) => { params[k] = spiceNum(v); });
         cur = { params, rows: [] }; runs.push(cur); continue;
       }
-      const m = /^\s*([\d.eE+-]+)\s+\(\s*([\d.eE+-]+)\s*dB\s*,\s*([\d.eE+-]+)/.exec(line);
-      if (!m) continue;
+      // Bode format: f  (dB,deg°)      Cartesian format: f  re,im
+      let row = null;
+      let m = /^\s*([\d.eE+-]+)\s+\(\s*([\d.eE+-]+)\s*dB\s*,\s*([\d.eE+-]+)/.exec(line);
+      if (m) row = [parseFloat(m[1]), parseFloat(m[2]), parseFloat(m[3])];
+      else if ((m = /^\s*([\d.eE+-]+)\s+\(?\s*([\d.eE+-]+)\s*,\s*([\d.eE+-]+)\s*\)?\s*$/.exec(line))) {
+        const re = parseFloat(m[2]), im = parseFloat(m[3]);
+        row = [parseFloat(m[1]), 20 * Math.log10(Math.hypot(re, im)), Math.atan2(im, re) * 180 / Math.PI];
+      }
+      if (!row || !row.every(Number.isFinite)) continue;
       if (!cur) { cur = { params: {}, rows: [] }; runs.push(cur); }
-      cur.rows.push([parseFloat(m[1]), parseFloat(m[2]), parseFloat(m[3])]);
+      cur.rows.push(row);
     }
     for (const r of runs) {
       let prev = null, off = 0;
@@ -262,10 +269,15 @@
   });
 
   /* ---------------- Optional figures ---------------- */
+  // data-alt: a second file name to try (e.g. .png when .jpg is missing) before hiding the figure
   document.querySelectorAll("figure.optional img").forEach((img) => {
-    const hide = () => { img.closest("figure").hidden = true; };
-    if (img.complete && img.naturalWidth === 0) hide();
-    img.addEventListener("error", hide);
+    const fail = () => {
+      const alt = img.dataset.alt;
+      if (alt && img.getAttribute("src") !== alt) { img.src = alt; return; }
+      img.closest("figure").hidden = true;
+    };
+    if (img.complete && img.naturalWidth === 0) fail();
+    img.addEventListener("error", fail);
   });
 
   /* ---------------- Optional report links ----------------
