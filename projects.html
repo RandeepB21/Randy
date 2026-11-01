@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Work | Randy</title>
+  <meta name="description" content="Analog IC and hardware projects by Randy.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css?v=10">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="site-name" href="index.html">Randy <span>Analog IC design</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="projects.html" aria-current="page">Work</a>
+        <a href="tools.html">Tools</a>
+        <a href="contact.html">Contact</a>
+        <a href="resume.pdf" target="_blank" rel="noopener">Résumé</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <h1>Work</h1>
+        <p class="lede">Transistor-level designs simulated in LTspice on the GF180MCU open PDK, plus hardware built end to end.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Analog IC design</h2>
+        <ul class="work">
+          <li><a class="row" href="project-opamp.html">
+            <div>
+              <h3>Two-stage Miller-compensated op-amp</h3>
+              <p>Sedra/Smith Example 13.1 topology. Compensation sized for phase margin, then re-sized when a large step showed the second
+                stage cutting off. Compares a PDK poly resistor with a triode transistor that tracks g<sub>m6</sub>, across corners, temperature and Monte Carlo.</p>
+              <span class="status">Complete</span>
+            </div>
+            <dl class="facts"><dt>Gain</dt><dd>81.7 dB</dd><dt>f<sub>t</sub></dt><dd>34.9 MHz</dd><dt>Phase margin</dt><dd>64.9&deg;</dd><dt>Worst-case PM</dt><dd>64.2&deg;</dd></dl>
+          </a></li>
+          <li><a class="row" href="project-cascode.html">
+            <div>
+              <h3>Folded cascode op-amp</h3>
+              <p>NMOS-input folded cascode with a narrow-diode bias circuit that sets the cascode voltage without wasting headroom, and NMOS
+                clamps that keep the input pair saturated while slewing. Meets gain and bandwidth specs at every corner from &minus;40 to 125&nbsp;&deg;C and in 500 Monte Carlo trials.</p>
+              <span class="status">Complete</span>
+            </div>
+            <dl class="facts"><dt>Gain</dt><dd>79.1 dB</dd><dt>f<sub>t</sub></dt><dd>38 MHz</dd><dt>Phase margin</dt><dd>82.2&deg;</dd><dt>Settling, &beta; = 0.5</dt><dd>73.5 ns to 2<sup>&minus;9</sup></dd></dl>
+          </a></li>
+          <li><a class="row" href="project-bgr.html">
+            <div>
+              <h3>Bandgap voltage reference</h3>
+              <p>A temperature-stable reference built from a PTAT current and a CTAT base&ndash;emitter voltage, designed from Razavi chapter 12
+                and verified with temperature sweeps.</p>
+              <span class="status wip">In progress</span>
+            </div>
+            <dl class="facts"><dt>Reference</dt><dd>Razavi ch. 12</dd><dt>Process</dt><dd>GF180MCU</dd></dl>
+          </a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Hardware</h2>
+        <ul class="work">
+          <li><a class="row" href="project-capstone.html">
+            <div>
+              <h3>Capstone: smart plant watering system</h3>
+              <p>Sensor node with a custom PCB and enclosure that talks to a mobile app over Bluetooth and Wi-Fi, where a model predicts when to water.</p>
+              <span class="status">Complete</span>
+            </div>
+            <dl class="facts"><dt>PCB</dt><dd>KiCad</dd><dt>MCU</dt><dd>ESP32</dd><dt>Enclosure</dt><dd>Fusion 360</dd></dl>
+          </a></li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span class="foot-left"><span>&copy; 2026 Randy</span>
+        <span class="cal-sticker" title="Date this site was last updated"><b>Calibrated</b> <time datetime="2026-11-01">1 Nov 2026</time></span></span>
+      <nav aria-label="Elsewhere">
+        <a href="mailto:you@example.com">Email</a>
+        <a href="https://www.linkedin.com/in/your-handle" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/your-handle" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </footer>
+  <script src="site.js?v=9"></script>
+</body>
+</html>
