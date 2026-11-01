@@ -74,7 +74,7 @@
         </figure>
 
         <figure class="figure optional">
-          <img src="images/opamp-schematic.png" alt="Schematic of the two-stage op-amp with compensation capacitor and triode-transistor nulling resistor">
+          <img src="images/two-stage/image13.jpg" alt="Schematic of the two-stage op-amp with compensation capacitor and triode-transistor nulling resistor">
           <figcaption><b>Schematic.</b> M1/M2 input pair, M3/M4 mirror load, M5 tail, M6/M7 second stage, M8 bias reference, with
             C<sub>C</sub> and the triode transistor M<sub>Z</sub> and its bias network M<sub>P</sub>, M<sub>A</sub>, M<sub>B</sub>.</figcaption>
         </figure>
@@ -132,17 +132,17 @@
 
         <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
           <figure class="figure optional">
-            <img src="images/opamp-step-before.png" alt="Large-step response with C_C = 233.8 fF, showing 15.8% overshoot and M6 gate voltage dropping below threshold">
+            <img src="images/two-stage/ts_slew_cc233.png" alt="Large-step response with C_C = 233.8 fF, showing 15.8% overshoot and M6 gate voltage dropping below threshold">
             <figcaption><b>Large step, C<sub>C</sub> = 233.8 fF.</b> 15.8% overshoot: V<sub>G6</sub> falls below V<sub>tn6</sub> = 0.708 V and M6 switches off during slewing.</figcaption>
           </figure>
           <figure class="figure optional">
-            <img src="images/opamp-step-after.png" alt="Large-step response with C_C = 350 fF, showing 3.4% overshoot with M6 gate voltage staying above threshold">
+            <img src="images/two-stage/ts_slew_cc350.png" alt="Large-step response with C_C = 350 fF, showing 3.4% overshoot with M6 gate voltage staying above threshold">
             <figcaption><b>Large step, C<sub>C</sub> = 350 fF.</b> Overshoot drops to 3.4% and V<sub>G6</sub> stays above 0.715 V, so M6 never turns off.</figcaption>
           </figure>
         </div>
 
         <figure class="figure optional fig-sm">
-          <img src="images/opamp-mz-bias.png" alt="Bias network for the triode transistor M_Z: PMOS M_P feeding stacked diode-connected NMOS M_A and M_B">
+          <img src="images/two-stage/image7.jpg" alt="Bias network for the triode transistor M_Z: PMOS M_P feeding stacked diode-connected NMOS M_A and M_B">
           <figcaption><b>Triode-resistor bias network.</b> M<sub>P</sub> feeds stacked diodes M<sub>A</sub> and M<sub>B</sub> at M6's current density, so
             M<sub>Z</sub>'s overdrive follows M6's and R<sub>Z</sub>g<sub>m6</sub> is set by the width ratio alone.</figcaption>
         </figure>
@@ -177,7 +177,7 @@
         </div>
 
         <figure class="figure optional">
-          <img src="images/opamp-pm-temp.png" alt="Phase margin versus temperature at five process corners, PDK poly resistor against triode transistor M_Z">
+          <img src="images/two-stage/ts_pm_rpdk_vs_mz.png" alt="Phase margin versus temperature at five process corners, PDK poly resistor against triode transistor M_Z">
           <figcaption><b>Phase margin over temperature.</b> With the poly resistor the phase margin falls about 5&deg; from &minus;40 to
             125&nbsp;&deg;C at every corner; with M<sub>Z</sub> it moves less than 0.8&deg;.</figcaption>
         </figure>
@@ -216,7 +216,7 @@
         </div>
 
         <figure class="figure optional">
-          <img src="images/opamp-mc.png" alt="Monte Carlo histograms of k and phase margin for the original and 8x bias designs">
+          <img src="images/two-stage/ts_mz8x_11_mc.png" alt="Monte Carlo histograms of k and phase margin for the original and 8x bias designs">
           <figcaption><b>Monte Carlo histograms.</b> Moving the bias devices into M6's model bin collapses the spread in k and phase margin.</figcaption>
         </figure>
 
@@ -244,7 +244,7 @@
   <footer class="site-footer">
     <div class="wrap">
       <span class="foot-left"><span>&copy; 2026 Randy</span>
-        <span class="cal-sticker" title="Date this site was last updated"><b>Calibrated</b> <time datetime="2026-10-31">31 Oct 2026</time></span></span>
+        <span class="cal-sticker" title="Date this site was last updated"><b>Calibrated</b> <time datetime="2026-11-01">1 Nov 2026</time></span></span>
       <nav aria-label="Elsewhere">
         <a href="mailto:you@example.com">Email</a>
         <a href="https://www.linkedin.com/in/your-handle" rel="noopener">LinkedIn</a>
